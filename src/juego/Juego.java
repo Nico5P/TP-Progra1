@@ -14,6 +14,7 @@ public class Juego extends InterfaceJuego
 	// Variables y métodos propios de cada grupo
 	// ...
 	Islas[] islas;
+	Pep pep;
 	
 	
 	Juego()
@@ -22,7 +23,8 @@ public class Juego extends InterfaceJuego
 		this.entorno = new Entorno(this, "Proyecto para TP; Balbi, Gomez, Pereira, Pereyra", 800, 600);
 		
 		// Inicializar lo que haga falta para el juego
-		// ...
+		
+		// Generación de de islas por filas
 		int islasPorFila=5;
 		this.islas = new Islas[islasPorFila *(islasPorFila+1)/2];
 		double ejeY=110;
@@ -37,8 +39,13 @@ public class Juego extends InterfaceJuego
 				ejeX=ejeX+100+60; //
 				index++;
 			}
-			ejeY=ejeY+80;
+			ejeY=ejeY+104;
 		}
+		
+		//Generar a Pep
+		pep = new Pep(400, entorno.alto()-110);
+		
+		
 		// Inicia el juego!
 		this.entorno.iniciar();
 	}
@@ -53,10 +60,24 @@ public class Juego extends InterfaceJuego
 	{
 		// Procesamiento de un instante de tiempo
 		// ...
+		
+		// Generación de de islas por filas
 		for (int i=0;i<islas.length;i++){
 			islas[i].generarIslas(entorno);	
 		}
 		
+		// Dibuja y toma el movimiento de Pep
+		pep.dibujarse(entorno);
+		
+		if (entorno.estaPresionada(entorno.TECLA_IZQUIERDA) && pep.getX() > 5)
+			pep.moverIzquierda();
+		if (entorno.estaPresionada(entorno.TECLA_DERECHA) && pep.getX() < entorno.ancho() - 5)
+			pep.moverDerecha();
+		if (entorno.estaPresionada(entorno.TECLA_ARRIBA) && !saltando)
+		{
+			saltando = true;
+        	VelocidadY = -15;
+		}
 	}
 	
 
