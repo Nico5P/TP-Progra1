@@ -13,15 +13,32 @@ public class Juego extends InterfaceJuego
 	
 	// Variables y métodos propios de cada grupo
 	// ...
+	Islas[] islas;
+	
 	
 	Juego()
 	{
 		// Inicializa el objeto entorno
-		this.entorno = new Entorno(this, "Proyecto para TP", 800, 600);
+		this.entorno = new Entorno(this, "Proyecto para TP; Balbi, Gomez, Pereira, Pereyra", 800, 600);
 		
 		// Inicializar lo que haga falta para el juego
 		// ...
-
+		int islasPorFila=5;
+		this.islas = new Islas[islasPorFila *(islasPorFila+1)/2];
+		double ejeY=110;
+		int index=0;
+		
+		for(int fila=0; fila<islasPorFila; fila++)
+		{
+			double ejeX=400-(fila*80);
+			for(int i=0; i<=fila; i++)
+			{
+				this.islas[index] = new Islas(ejeX, ejeY, 100, 30) ;
+				ejeX=ejeX+100+60; //
+				index++;
+			}
+			ejeY=ejeY+80;
+		}
 		// Inicia el juego!
 		this.entorno.iniciar();
 	}
@@ -36,6 +53,9 @@ public class Juego extends InterfaceJuego
 	{
 		// Procesamiento de un instante de tiempo
 		// ...
+		for (int i=0;i<islas.length;i++){
+			islas[i].generarIslas(entorno);	
+		}
 		
 	}
 	

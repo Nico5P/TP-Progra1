@@ -1,22 +1,26 @@
+package juego;
+
+import java.awt.Color;
+
+import entorno.Entorno;
 
 public class Islas 
 {
-	public Rectangle[] dibujarIslas()
+	double x;
+	double y;
+	double ancho;
+	double alto;
+	
+	public Islas(double x, double y, double ancho, double alto)
 	{
-		int ejeX=49;
-		int ejeY=510;
-		Rectangle[] islas = new Rectangle[14];
-		for(int fila=0; fila<5; fila++)
-		{
-			int islasPorFila=5;
-			for(int i=0; i<islasPorFila; i++)
-			{
-				islas[i] = new Rectangle(ejeX, ejeY, 138, 25);
-				ejeX=ejeX+138+49;
-			}
-			ejeY=ejeY-100;
-			islasPorFila--;
-		}
-		return islas;
+		this.x=x;
+		this.y=y;
+		this.ancho=ancho;
+		this.alto=alto;
+	}
+	
+	public void generarIslas(Entorno e)
+	{
+		e.dibujarRectangulo(this.x, this.y, this.ancho, this.alto, 0, Color.blue);
 	}
 }
