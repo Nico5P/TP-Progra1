@@ -15,7 +15,7 @@ public class Juego extends InterfaceJuego
 	// ...
 	Islas[] islas;
 	Pep pep;
-	
+
 	
 	Juego()
 	{
@@ -36,6 +36,7 @@ public class Juego extends InterfaceJuego
 			for(int i=0; i<=fila; i++)
 			{
 				this.islas[index] = new Islas(ejeX, ejeY, 100, 30) ;
+				
 				ejeX=ejeX+100+60; //
 				index++;
 			}
@@ -73,10 +74,14 @@ public class Juego extends InterfaceJuego
 			pep.moverIzquierda();
 		if (entorno.estaPresionada(entorno.TECLA_DERECHA) && pep.getX() < entorno.ancho() - 5)
 			pep.moverDerecha();
-		if (entorno.estaPresionada(entorno.TECLA_ARRIBA) && !saltando)
+		if (entorno.estaPresionada(entorno.TECLA_ARRIBA))
 		{
-			saltando = true;
-        	VelocidadY = -15;
+			pep.saltando = true;
+			pep.salto();
+			
+			pep.saltando= false;
+			
+        	pep.VelocidadY = -15;
 		}
 	}
 	

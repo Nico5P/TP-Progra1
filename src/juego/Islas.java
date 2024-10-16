@@ -23,4 +23,5 @@ public class Islas
 	{
 		e.dibujarRectangulo(this.x, this.y, this.ancho, this.alto, 0, Color.blue);
 	}
+	
 }
