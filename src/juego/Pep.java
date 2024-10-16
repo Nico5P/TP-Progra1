@@ -7,14 +7,14 @@ import entorno.Entorno;
 public class Pep
 {
 	// Variables de instancia
-	private int x, y;
-	private int ancho;
-	private int alto;
-	public int VelocidadY = 0;
+	private double x, y;
+	private double ancho;
+	private double alto;
+	public double VelocidadY = 0;
     public boolean saltando = false;
     public boolean mirandoDerecha=true;
 
-	public Pep(int x, int y) 
+	public Pep(double x, double y) 
 	{
 		this.x = x;
 		this.y = y;
@@ -38,35 +38,36 @@ public class Pep
 	{
         if (saltando)
         {
-        		for(int i=0; i<20; i++)
+        		for(double i=0; i<20; i++)
         		{
         			if(i<10)
         			{
         				this.y=this.y-1;
         			}
-        			if(i>9 && i<15)
-        			{
-        				if(mirandoDerecha==true)
-        				{
-        					this.x++;
-        				}
-        				else
-        				{
-        					this.x--;
-        				}
-        			}
-        			if(i>14)
-        			{
-        				if(mirandoDerecha==true)
-        				{
-        					this.x++;
-        				}
-        				else
-        				{
-        					this.x--;
-        				}
 
-        			}
+//        			if(i>9 && i<15)
+//        			{
+//        				if(mirandoDerecha==true)
+//        				{
+//        					this.x++;
+//        				}
+//        				else
+//        				{
+//        					this.x--;
+//        				}
+//        			}
+//        			if(i>14)
+//        			{
+//        				if(mirandoDerecha==true)
+//        				{
+//        					this.x++;
+//        				}
+//        				else
+//        				{
+//        					this.x--;
+//        				}
+//
+//        			}
         		}	
         		saltando=false;
         	
@@ -99,7 +100,7 @@ public class Pep
 		entorno.dibujarRectangulo(this.x, this.y, this.ancho, this.alto, 0, Color.red);
 	}
 
-	public int getX() 
+	public double getX() 
 	{
 		return this.x;
 	}
@@ -116,7 +117,7 @@ public class Pep
 		return false;			
 	}
 */
-	public int getY() 
+	public double getY() 
 	{
 		return this.y;
 	}
@@ -124,5 +125,24 @@ public class Pep
 	public boolean getSaltando()
 	{
 		return this.saltando;
+	}
+	
+	public double limiteSuperiorPep() 
+	{
+		return this.y - this.alto/2;
+	}
+	
+	public double limitesInferiorPep() 
+	{
+		return this.y + this.alto/2;
+	}
+	
+	public double limiteIzquierdoPep() 
+	{
+		return this.x-this.ancho/2;
+	}
+	public double limiteDerechoPep() 
+	{
+		return this.x+this.ancho/2;
 	}
 }

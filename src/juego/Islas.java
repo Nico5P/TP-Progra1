@@ -19,6 +19,26 @@ public class Islas
 		this.alto=alto;
 	}
 	
+	public double limiteSuperior() 
+	{
+		return this.y - this.alto/2;
+	}
+	
+	public double limiteInferior() 
+	{
+		return this.y + this.alto/2;
+	}
+	
+	public double limiteIzquierdo() 
+	{
+		return this.x-this.ancho/2;
+	}
+	public double limiteDerecho() 
+	{
+		return this.x+this.ancho/2;
+	}
+	
+	
 	public void generarIslas(Entorno e)
 	{
 		e.dibujarRectangulo(this.x, this.y, this.ancho, this.alto, 0, Color.blue);
