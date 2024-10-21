@@ -16,6 +16,7 @@ public class Juego extends InterfaceJuego
 	Islas[] islas;
 	Pep pep;
 	Tortugas[] tortugas;
+	Gnomos[] gnomos;
 	int horas;
 	int minutos;
 	int segundos;
@@ -55,6 +56,14 @@ public class Juego extends InterfaceJuego
 		
 		//Generar a Pep
 		pep = new Pep(400, entorno.alto()-110);
+		
+		//generar gnomos
+		
+		this.gnomos = new Gnomos[2];
+		for(int i = 0; i<this.gnomos.length; i++) 
+		{
+			this.gnomos[i] = new Gnomos(400,83,10,20);
+		}
 		
 		
 		// Inicia el juego!
@@ -134,7 +143,7 @@ public class Juego extends InterfaceJuego
 			
         	pep.VelocidadY = -15;
 		}
-	}
+	
 	
 	
 //	public boolean colisionIslas()
@@ -153,11 +162,36 @@ public class Juego extends InterfaceJuego
 //			return false;
 //		}
 //		return false;
-		
-		
-		
 //	}
 	
+			//dibujar nomos
+		for(int i=0; i<gnomos.length; i++) {
+			gnomos[i].dibujarse(entorno);
+		}
+			
+			
+		for(int i=0;  i<gnomos.length; i++) {
+			if(gnomos[i].apoyado) {
+				gnomos[i].seMueveDerecha();
+			}
+			if(gnomos[i].limiteIzquierdo() < islas[i].limiteIzquierdo() || gnomos[i].limiteDerecho() >islas[i].limiteDerecho()) {
+				gnomos[i].y+=5;
+			}
+			if (gnomos[i].limiteInferior() >= islas[i].limiteSuperior() && gnomos[i].limiteInferior() <= islas[i].limiteSuperior() + 5) { // Ajusta el rango según sea necesario
+				gnomos[i].apoyado = false; // Establece que está apoyado
+				// Detén el movimiento horizontal
+			} else {
+				gnomos[i].apoyado = true; // Si no está en la isla, no está apoyado
+			}
+		}
+//			this.x+=5;
+//			if(this.x > limiteIzquierdo() || this.x < limiteDerecho() ) {
+//				this.y+=5;
+//			}
+	
+	
+	
+	}
 
 	@SuppressWarnings("unused")
 	public static void main(String[] args)
