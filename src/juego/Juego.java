@@ -169,7 +169,6 @@ public class Juego extends InterfaceJuego
 			//dibujar nomos
 		
 			
-		double indx=0;
 		for(int i=0;  i<gnomos.length; i++) {
 
 			gnomos[i].dibujarse(entorno);
