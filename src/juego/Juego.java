@@ -59,7 +59,7 @@ public class Juego extends InterfaceJuego
 		
 		//generar gnomos
 		
-		this.gnomos = new Gnomos[2];
+		this.gnomos = new Gnomos[1];
 		for(int i = 0; i<this.gnomos.length; i++) 
 		{
 			this.gnomos[i] = new Gnomos(400,83,10,20);
@@ -127,6 +127,8 @@ public class Juego extends InterfaceJuego
 			islas[i].generarIslas(entorno);
 		}
 		
+		
+		
 		// Dibuja y toma el movimiento de Pep
 		pep.dibujarse(entorno);
 		
@@ -165,24 +167,39 @@ public class Juego extends InterfaceJuego
 //	}
 	
 			//dibujar nomos
-		for(int i=0; i<gnomos.length; i++) {
-			gnomos[i].dibujarse(entorno);
-		}
+		
 			
-			
+		double indx=0;
 		for(int i=0;  i<gnomos.length; i++) {
+
+			gnomos[i].dibujarse(entorno);
+			
+			
+			
+			
 			if(gnomos[i].apoyado) {
 				gnomos[i].seMueveDerecha();
+			
 			}
-			if(gnomos[i].limiteIzquierdo() < islas[i].limiteIzquierdo() || gnomos[i].limiteDerecho() >islas[i].limiteDerecho()) {
+			//este esta bien el if pero caen asustados
+			if(gnomos[i].limiteDerecho() < islas[i].limiteIzquierdo() || gnomos[i].limiteIzquierdo() > islas[i].limiteDerecho()) {
 				gnomos[i].y+=5;
+				gnomos[i].x=islas[i].limiteIzquierdo();
 			}
-			if (gnomos[i].limiteInferior() >= islas[i].limiteSuperior() && gnomos[i].limiteInferior() <= islas[i].limiteSuperior() + 5) { // Ajusta el rango según sea necesario
-				gnomos[i].apoyado = false; // Establece que está apoyado
-				// Detén el movimiento horizontal
+			
+			//este cae bien pero los if esta mal
+//			if(gnomos[i].limiteIzquierdo() < islas[i].limiteIzquierdo() || gnomos[i].limiteDerecho() >islas[i].limiteDerecho()) {
+//				gnomos[i].y+=5;
+//				gnomos[i].x=islas[i].limiteDerecho();
+//			}
+			
+			if (gnomos[i].limiteInferior() == islas[i].limiteSuperior()) { 
+				gnomos[i].apoyado = true; 
+				
 			} else {
-				gnomos[i].apoyado = true; // Si no está en la isla, no está apoyado
+				gnomos[i].apoyado = true; 
 			}
+			
 		}
 //			this.x+=5;
 //			if(this.x > limiteIzquierdo() || this.x < limiteDerecho() ) {

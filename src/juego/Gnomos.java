@@ -1,6 +1,7 @@
 package juego;
 
 import java.awt.Color;
+import java.util.Timer;
 
 import entorno.Entorno;
 
@@ -9,6 +10,7 @@ public class Gnomos {
 	double ancho, alto;
 	boolean apoyado= false;
 	double direccion =1;
+	boolean stop=false;
 //	Timer timer;
 	
 	
@@ -22,12 +24,19 @@ public class Gnomos {
 	}
 	
 	public void dibujarse(Entorno entorno) {
-		entorno.dibujarRectangulo(x, y, ancho, alto,0, Color.yellow);
-//		this.x+=5;
-//		if(this.x > limiteIzquierdo() || this.x < limiteDerecho() ) {
-//			this.y+=5;
-//		}
+		
+			entorno.dibujarRectangulo(x, y, ancho, alto,0, Color.yellow);
+		
 	}
+	
+//	public void actualizar(Entorno entorno) {
+//        contador++;
+//        if (contador == tiempoDibujar) {
+//            // Cuando el contador llegue a 2, se dibuja el rectángulo
+//            dibujarse(entorno);
+//            contador = 0; // Reiniciar el contador
+//        }
+//    }
 	
 	public double seMueveDerecha() {
 		return this.x+=2;
