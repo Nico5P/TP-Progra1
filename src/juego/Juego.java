@@ -20,6 +20,7 @@ public class Juego extends InterfaceJuego
 	int minutos;
 	int segundos;
 	
+	
 	Juego()
 	{
 		// Inicializa el objeto entorno
@@ -66,6 +67,7 @@ public class Juego extends InterfaceJuego
 	 * actualizar el estado interno del juego para simular el paso del tiempo 
 	 * (ver el enunciado del TP para mayor detalle).
 	 */
+	
 	public void tick()
 	{
 		// Procesamiento de un instante de tiempo
@@ -78,34 +80,39 @@ public class Juego extends InterfaceJuego
 		
 		for(int i=0; i<entorno.tiempo()+1; i++)
 		{
-			for(int ii=0; ii<islas.length; ii++)
+			for(int ii=0; ii<tortugas.length; ii++)
 			{
-				for(int iii=0; iii<tortugas.length; iii++)
+				for(int iii=0; iii<islas.length; iii++)
 				{
-					if(islas[ii].limiteSuperior()==tortugas[iii].limiteInferior())
+					if(islas[iii].limiteSuperior()==tortugas[ii].limiteInferior() && islas[iii].limiteIzquierdo()<tortugas[ii].limiteIzquierdo() && islas[iii].limiteDerecho()>tortugas[ii].limiteDerecho())
 					{
-						tortugas[iii].colisionInferior=true;
+						tortugas[ii].colisionInferior=true;
+						
 					}
 				}
 			}
 		}
 		//Generación de las tortugas			
-		for (int i=0;i<tortugas.length;i++){
-			tortugas[i].dibujarse(entorno);		
+		if (segundos>5)
+		{
+			for (int i=0;i<tortugas.length;i++){
+				tortugas[i].dibujarse(entorno);
+			}
 		}
+
 	
 		//velocidad de las torugas
 	
-		if (!entorno.estaPresionada('P'))
-		{
-			for (int i=0;i<tortugas.length;i++)
-			{
-				if (!tortugas[i].getUbicadas() && tortugas[i].getY() <= 500)
-				{
-					tortugas[i].velocidad();
-				}
-			}
-		}
+//		if (!entorno.estaPresionada('P'))
+//		{
+//			for (int i=0;i<tortugas.length;i++)
+//			{
+//				if (!tortugas[i].getUbicadas() && tortugas[i].getY() <= 500)
+//				{
+//					tortugas[i].velocidad();
+//				}
+//			}
+//		}
 		// Generación de de islas por filas
 		for (int i=0;i<islas.length;i++){
 			islas[i].generarIslas(entorno);

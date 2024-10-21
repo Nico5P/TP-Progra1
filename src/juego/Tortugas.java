@@ -15,7 +15,18 @@ public class Tortugas {
 	public Tortugas() {
 		
 		Random gen = new Random();
-		this.x = gen.nextInt(800) + 1;
+		double xSpawn1 = gen.nextInt(350) + 1;
+		double xSpawn2 = gen.nextInt(800) + 470;
+		int dondeSpawnea= gen.nextInt(2) + 1;
+		if(dondeSpawnea>1)
+		{
+			this.x = xSpawn2;
+		}
+		else
+		{
+			this.x = xSpawn1;
+		}
+//		this.x = gen.nextInt(800) + 1;
 		this.y = gen.nextInt(20) + 1;
 		
 		this.ancho=10;
@@ -28,18 +39,16 @@ public class Tortugas {
 	
 	boolean colisionInferior=false;
 	public void dibujarse(Entorno entorno) {
-		if (this.y < 650) {
+		if (this.y < 650 && colisionInferior==false) {
 			entorno.dibujarRectangulo(x, y, ancho, ancho, alto, Color.white);
-			if(colisionInferior==false)
-			{
-				this.y+=5;
-			}	
-			else 
-			{
-				entorno.dibujarRectangulo(x, y, ancho, ancho, alto, Color.white);
-				
-			}
+			this.y+=5;
 		}
+		else 
+		{
+			entorno.dibujarRectangulo(x, y, ancho, ancho, alto, Color.white);
+				
+		}
+		
 		
 	}
 	
