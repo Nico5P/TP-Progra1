@@ -20,6 +20,8 @@ public class Juego extends InterfaceJuego
 	int horas;
 	int minutos;
 	int segundos;
+	int numIsla=0;
+	int numTortuga=0;
 	
 	
 	Juego()
@@ -58,7 +60,6 @@ public class Juego extends InterfaceJuego
 		pep = new Pep(400, entorno.alto()-110);
 		
 		//generar gnomos
-		
 		this.gnomos = new Gnomos[1];
 		for(int i = 0; i<this.gnomos.length; i++) 
 		{
@@ -87,41 +88,80 @@ public class Juego extends InterfaceJuego
 		int hor= min/60;
 		horas = hor%60;
 		
-		for(int i=0; i<entorno.tiempo()+1; i++)
+		for(int numTortuga=0; numTortuga<tortugas.length; numTortuga++)
 		{
-			for(int ii=0; ii<tortugas.length; ii++)
+			for(int numIsla=0; numIsla<islas.length; numIsla++)
 			{
-				for(int iii=0; iii<islas.length; iii++)
+				if(islas[numIsla].limiteSuperior()==tortugas[numTortuga].limiteInferior() && (islas[numIsla].limiteIzquierdo())<tortugas[numTortuga].limiteIzquierdo() && (islas[numIsla].limiteDerecho())>tortugas[numTortuga].limiteDerecho())
 				{
-					if(islas[iii].limiteSuperior()==tortugas[ii].limiteInferior() && islas[iii].limiteIzquierdo()<tortugas[ii].limiteIzquierdo() && islas[iii].limiteDerecho()>tortugas[ii].limiteDerecho())
+					if(tortugas[numTortuga].derecha==true)
 					{
-						tortugas[ii].colisionInferior=true;
-						
+						tortugas[numTortuga].x++;
 					}
+					else
+					{
+						tortugas[numTortuga].x--;
+					}
+					tortugas[numTortuga].ubicada=true;
+					if(tortugas[numTortuga].getX()==islas[numIsla].limiteIzquierdo())
+					{
+						tortugas[numTortuga].derecha=true;
+					}
+					if(tortugas[numTortuga].getX()==islas[numIsla].limiteDerecho())
+					{
+						tortugas[numTortuga].ubicada=false;
+					}
+					
 				}
 			}
 		}
+		boolean apoyadoEnAlgunaIsla = false; // Variable temporal
+		for(int numIsla=0; numIsla<islas.length; numIsla++)
+		{
+			if(pep.limiteInferior()==islas[numIsla].limiteSuperior() && pep.limiteIzquierdo()>islas[numIsla].limiteIzquierdo()-40 && pep.limiteDerecho()<islas[numIsla].limiteDerecho()+40)
+			{
+				apoyadoEnAlgunaIsla = true; // Se ha encontrado una isla
+		        break; // Salir del bucle, ya no es necesario seguir revisando
+			}
+		}
+		pep.apoyado = apoyadoEnAlgunaIsla; // Asignar el resultado final
+//		for(int ii=0; ii<tortugas.length; ii++)
+//		{
+//			for(int iii=0; iii<islas.length-1; iii++)
+//			{
+//				if(tortugas[ii].ubicada=true)
+//				{
+//						
+//				}
+//				
+//			}
+//		}
+			
+//		for(int ii=0; ii<tortugas.length; ii++)
+//		{
+//			for(int iii=0; iii<islas.length; iii++)
+//			{
+//				tortugas[ii].tortugaUbicada(islas[iii].limiteSuperior(), islas[iii].limiteIzquierdo(), islas[iii].limiteDerecho());
+//					
+//			}
+//		}
+		
+		
+
 		//Generación de las tortugas			
-		if (segundos>5)
+		if (segundos>0)
 		{
 			for (int i=0;i<tortugas.length;i++){
-				tortugas[i].dibujarse(entorno);
+//				for(int iii=0; iii<islas.length; iii++)
+//					{
+//						tortugas[i].tortugaUbicada(islas[iii].limiteSuperior(), islas[iii].limiteIzquierdo(), islas[iii].limiteDerecho());		
+//					}
+				tortugas[i].dibujarse(entorno, tortugas[i].ubicada);
 			}
 		}
 
 	
-		//velocidad de las torugas
-	
-//		if (!entorno.estaPresionada('P'))
-//		{
-//			for (int i=0;i<tortugas.length;i++)
-//			{
-//				if (!tortugas[i].getUbicadas() && tortugas[i].getY() <= 500)
-//				{
-//					tortugas[i].velocidad();
-//				}
-//			}
-//		}
+
 		// Generación de de islas por filas
 		for (int i=0;i<islas.length;i++){
 			islas[i].generarIslas(entorno);
@@ -136,39 +176,19 @@ public class Juego extends InterfaceJuego
 			pep.moverIzquierda();
 		if (entorno.estaPresionada(entorno.TECLA_DERECHA) && pep.getX() < entorno.ancho() - 5 && pep.saltando==false)
 			pep.moverDerecha();
-		if (entorno.estaPresionada(entorno.TECLA_ARRIBA))
+		if (entorno.sePresiono(entorno.TECLA_ARRIBA))
 		{
 			pep.saltando = true;
-			pep.salto();
+			pep.salto(entorno);
 			
 			pep.saltando= false;
 			
         	pep.VelocidadY = -15;
 		}
+		pep.caer(pep.saltando, pep.apoyado);
 	
 	
-	
-//	public boolean colisionIslas()
-//	{
-//		boolean colision=false;
-//		for(int i=0; i<islas.length; i++)
-//		{
-//			if(islas[i].limiteSuperior()==tortugas[i].limiteInferior())
-//			{
-//				colision=true;
-//			}
-//			if(colision==true)
-//			{
-//				return tortugas[i].colisionInferior=true;
-//			}
-//			return false;
-//		}
-//		return false;
-//	}
-	
-			//dibujar nomos
-		
-			
+		//dibujar gnomos
 		for(int i=0;  i<gnomos.length; i++) {
 
 			gnomos[i].dibujarse(entorno);

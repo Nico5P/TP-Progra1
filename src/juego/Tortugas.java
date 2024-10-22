@@ -6,11 +6,12 @@ import java.awt.Color;
 
 public class Tortugas {
 	Entorno[] entorno;
-	boolean ubicadas;
-	private double x, y;
-	private double ancho, alto;	
-	private double velocidad;
-	
+	Islas[] islas;
+	public double x, y;
+	public double ancho, alto;	
+	public double velocidad;
+	public boolean ubicada;
+	public boolean derecha;
 	
 	public Tortugas() {
 		
@@ -21,46 +22,42 @@ public class Tortugas {
 		if(dondeSpawnea>1)
 		{
 			this.x = xSpawn2;
+			this.derecha=true;
 		}
 		else
 		{
 			this.x = xSpawn1;
+			this.derecha=false;
 		}
-//		this.x = gen.nextInt(800) + 1;
+
 		this.y = gen.nextInt(20) + 1;
-		
 		this.ancho=10;
 		this.alto=10;
-		
 		this.velocidad = gen.nextInt(5) + 1;
-
-		this.ubicadas=false;
+		this.ubicada=false;
+		
 	}
 	
-	boolean colisionInferior=false;
-	public void dibujarse(Entorno entorno) {
-		if (this.y < 650 && colisionInferior==false) {
+	public void dibujarse(Entorno entorno, boolean estaUbicada) {
+		if (this.y < 600 && ubicada==false) {
 			entorno.dibujarRectangulo(x, y, ancho, ancho, alto, Color.white);
 			this.y+=5;
 		}
-		else 
+		else
 		{
 			entorno.dibujarRectangulo(x, y, ancho, ancho, alto, Color.white);
-				
-		}
-		
-		
-	}
-	
-	
-	public void velocidad() {
-		if(colisionInferior==false)
-		{
-			this.y+= this.velocidad*0.001;
-			this.x+=this.velocidad*0.001;
 		}
 	}
 	
+	
+//	public void velocidad() {
+//		if(colisionInferior==false)
+//		{
+//			this.y+= this.velocidad*0.001;
+//			this.x+=this.velocidad*0.001;
+//		}
+//	}
+//	
 	
 	
 	public double getY() 
@@ -73,9 +70,9 @@ public class Tortugas {
 		return this.x;
 	}
 	
-	public boolean getUbicadas() 
+	public boolean getUbicada()
 	{
-		return this.ubicadas;
+		return this.ubicada;
 	}
 	
 	public double limiteSuperior() 

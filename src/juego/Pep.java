@@ -13,6 +13,7 @@ public class Pep
 	public double VelocidadY = 0;
     public boolean saltando = false;
     public boolean mirandoDerecha=true;
+    public boolean apoyado;
 
 	public Pep(double x, double y) 
 	{
@@ -34,42 +35,21 @@ public class Pep
 		mirandoDerecha=true;
 	}
 
-	public void salto()
+	public void salto(Entorno entorno)
 	{
         if (saltando)
         {
-        		for(double i=0; i<20; i++)
-        		{
-        			if(i<10)
-        			{
-        				this.y=this.y-1;
-        			}
-
-//        			if(i>9 && i<15)
-//        			{
-//        				if(mirandoDerecha==true)
-//        				{
-//        					this.x++;
-//        				}
-//        				else
-//        				{
-//        					this.x--;
-//        				}
-//        			}
-//        			if(i>14)
-//        			{
-//        				if(mirandoDerecha==true)
-//        				{
-//        					this.x++;
-//        				}
-//        				else
-//        				{
-//        					this.x--;
-//        				}
-//
-//        			}
-        		}	
-        		saltando=false;
+        	for(int i=0; i<30; i++)
+        	{
+        		entorno.dibujarRectangulo(this.x, this.y, this.ancho, this.alto, 0, Color.red);
+        		this.y--;
+        	}
+//        	for(int ii=0; ii<30; ii++)
+//        	{
+//        		entorno.dibujarRectangulo(this.x, this.y, this.ancho, this.alto, 0, Color.red);
+//        		this.x--;
+//        	}
+        	saltando=false;
         	
         	
 
@@ -87,9 +67,9 @@ public class Pep
         }
     }
 	
-	public void caer(boolean saltando)
+	public void caer(boolean saltando, boolean apoyado)
 	{
-		if (saltando==false)
+		if (saltando==false && apoyado==false)
 		{
 			this.y++;
 		}
@@ -127,21 +107,21 @@ public class Pep
 		return this.saltando;
 	}
 	
-	public double limiteSuperiorPep() 
+	public double limiteSuperior() 
 	{
 		return this.y - this.alto/2;
 	}
 	
-	public double limitesInferiorPep() 
+	public double limiteInferior() 
 	{
 		return this.y + this.alto/2;
 	}
 	
-	public double limiteIzquierdoPep() 
+	public double limiteIzquierdo() 
 	{
 		return this.x-this.ancho/2;
 	}
-	public double limiteDerechoPep() 
+	public double limiteDerecho() 
 	{
 		return this.x+this.ancho/2;
 	}
