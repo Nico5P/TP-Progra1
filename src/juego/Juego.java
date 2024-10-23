@@ -29,31 +29,33 @@ public class Juego extends InterfaceJuego
 		// Inicializa el objeto entorno
 		this.entorno = new Entorno(this, "Proyecto para TP; Balbi, Gomez, Pereira, Pereyra", 800, 600);
 		entorno.colorFondo(Color.pink);
+		
 		// Inicializar lo que haga falta para el juego
 		
 		//Generación de tortugas
 		this.tortugas = new Tortugas[30];
-		for(int i = 0; i<this.tortugas.length; i++) 
-		{
+		for (int i = 0; i<this.tortugas.length; i++) {
 			this.tortugas[i] = new Tortugas();
 		}
-		// Generación de de islas por filas
-		int islasPorFila=5;
-		this.islas = new Islas[islasPorFila *(islasPorFila+1)/2];
-		double ejeY=110;
-		int index=0;
 		
-		for(int fila=0; fila<islasPorFila; fila++)
+		// Generación de de islas por filas
+		
+		int islasPorFila = 5;
+		this.islas = new Islas[islasPorFila * (islasPorFila + 1) / 2];
+		double ejeY = 110;
+		int index = 0;
+		
+		for(int fila = 0; fila < islasPorFila; fila++)
 		{
-			double ejeX=400-(fila*80);
-			for(int i=0; i<=fila; i++)
+			double ejeX = 400 - (fila*80);
+			for(int i = 0; i <= fila; i++)
 			{
 				this.islas[index] = new Islas(ejeX, ejeY, 100, 30) ;
 				
-				ejeX=ejeX+100+60; //
+				ejeX = ejeX+100+60; //
 				index++;
 			}
-			ejeY=ejeY+104;
+			ejeY = ejeY+104;
 		}
 		
 		//Generar a Pep
@@ -61,7 +63,7 @@ public class Juego extends InterfaceJuego
 		
 		//generar gnomos
 		this.gnomos = new Gnomos[1];
-		for(int i = 0; i<this.gnomos.length; i++) 
+		for (int i = 0; i<this.gnomos.length; i++) 
 		{
 			this.gnomos[i] = new Gnomos(400,83,10,20);
 		}
@@ -78,8 +80,8 @@ public class Juego extends InterfaceJuego
 	 * (ver el enunciado del TP para mayor detalle).
 	 */
 	
-	public void tick()
-	{
+	public void tick() {
+		
 		// Procesamiento de un instante de tiempo
 		int sec= entorno.tiempo()/1000;
 		segundos= sec%60;
@@ -88,113 +90,98 @@ public class Juego extends InterfaceJuego
 		int hor= min/60;
 		horas = hor%60;
 		
-		for(int numTortuga=0; numTortuga<tortugas.length; numTortuga++)
+		
+		// Generación de Pep
+		// Dibuja y toma el movimiento de Pep
+		
+		pep.dibujarse(entorno);
+		
+		if (entorno.estaPresionada(entorno.TECLA_IZQUIERDA) && pep.getX() > 5 && pep.saltando == false)
+			pep.moverIzquierda();
+		if (entorno.estaPresionada(entorno.TECLA_DERECHA) && pep.getX() < entorno.ancho() - 5 && pep.saltando == false)
+			pep.moverDerecha();
+		if (entorno.sePresiono(entorno.TECLA_ARRIBA) && pep.saltando == false)
 		{
-			for(int numIsla=0; numIsla<islas.length; numIsla++)
-			{
-				if(islas[numIsla].limiteSuperior()==tortugas[numTortuga].limiteInferior() && (islas[numIsla].limiteIzquierdo())<tortugas[numTortuga].limiteIzquierdo() && (islas[numIsla].limiteDerecho())>tortugas[numTortuga].limiteDerecho())
-				{
-					if(tortugas[numTortuga].derecha==true)
-					{
-						tortugas[numTortuga].x++;
-					}
-					else
-					{
-						tortugas[numTortuga].x--;
-					}
-					tortugas[numTortuga].ubicada=true;
-					if(tortugas[numTortuga].getX()==islas[numIsla].limiteIzquierdo())
-					{
-						tortugas[numTortuga].derecha=true;
-					}
-					if(tortugas[numTortuga].getX()==islas[numIsla].limiteDerecho())
-					{
-						tortugas[numTortuga].ubicada=false;
-					}
-					
-				}
+			pep.saltando = true;
+			pep.salto(entorno);
+			if(!pep.apoyado && pep.chocaCon) {
+				pep.caer();
 			}
 		}
+		pep.caer();	
+		
+		//Colisiones de Pep
+		//El siguiente código comprueba si Pep está apoyado sobre una isla
 		boolean apoyadoEnAlgunaIsla = false; // Variable temporal
-		for(int numIsla=0; numIsla<islas.length; numIsla++)
-		{
-			if(pep.limiteInferior()==islas[numIsla].limiteSuperior() && pep.limiteIzquierdo()>islas[numIsla].limiteIzquierdo()-40 && pep.limiteDerecho()<islas[numIsla].limiteDerecho()+40)
-			{
+		for (int numIsla=0; numIsla < islas.length; numIsla++) {
+			if (pep.limiteInferior() == islas[numIsla].limiteSuperior() 
+				&& pep.limiteIzquierdo() > islas[numIsla].limiteIzquierdo() - 40 
+				&& pep.limiteDerecho() < islas[numIsla].limiteDerecho() + 40) {
 				apoyadoEnAlgunaIsla = true; // Se ha encontrado una isla
 		        break; // Salir del bucle, ya no es necesario seguir revisando
 			}
 		}
-		pep.apoyado = apoyadoEnAlgunaIsla; // Asignar el resultado final
-//		for(int ii=0; ii<tortugas.length; ii++)
-//		{
-//			for(int iii=0; iii<islas.length-1; iii++)
-//			{
-//				if(tortugas[ii].ubicada=true)
-//				{
-//						
-//				}
-//				
-//			}
-//		}
-			
-//		for(int ii=0; ii<tortugas.length; ii++)
-//		{
-//			for(int iii=0; iii<islas.length; iii++)
-//			{
-//				tortugas[ii].tortugaUbicada(islas[iii].limiteSuperior(), islas[iii].limiteIzquierdo(), islas[iii].limiteDerecho());
-//					
-//			}
-//		}
+		pep.apoyado = apoyadoEnAlgunaIsla; // Asignar el resultado final a pep
 		
+		
+		//Este código comprueba si Pep al saltar choca con el limite
+		//inferior o los límites laterales de aluna de las islas
+		boolean chocaConAlgunaIsla = false;
+		for (int numIsla=0; numIsla < islas.length; numIsla++) {
+			if (!pep.apoyado) {
+				// Comprobar colisiones
+		        if (pep.limiteSuperior() == islas[numIsla].limiteInferior() || 
+		            pep.limiteIzquierdo() == islas[numIsla].limiteDerecho() || 
+		            pep.limiteDerecho() == islas[numIsla].limiteIzquierdo()) {
+		            chocaConAlgunaIsla = true;
+		            break; // Salir del bucle si hay colisión
+		        }
+		    }
+		}
+		pep.chocaCon = chocaConAlgunaIsla;
 		
 
+		
 		//Generación de las tortugas			
-		if (segundos>0)
-		{
-			for (int i=0;i<tortugas.length;i++){
-//				for(int iii=0; iii<islas.length; iii++)
-//					{
-//						tortugas[i].tortugaUbicada(islas[iii].limiteSuperior(), islas[iii].limiteIzquierdo(), islas[iii].limiteDerecho());		
-//					}
+		if (segundos>0) { //Condicion para que se genere segundos despues de iniciar el juego
+			for (int i = 0; i < tortugas.length; i++) {
 				tortugas[i].dibujarse(entorno, tortugas[i].ubicada);
 			}
 		}
 
-	
+		for(int numTortuga = 0; numTortuga < tortugas.length; numTortuga++) {
+			for(int numIsla = 0; numIsla < islas.length; numIsla++) {
+				if (islas[numIsla].limiteSuperior() == tortugas[numTortuga].limiteInferior() && 
+					(islas[numIsla].limiteIzquierdo()) < tortugas[numTortuga].limiteIzquierdo() && 
+					(islas[numIsla].limiteDerecho()) > tortugas[numTortuga].limiteDerecho()){
+					if (tortugas[numTortuga].derecha == true) {
+						tortugas[numTortuga].x++;
+					}
+					else {
+						tortugas[numTortuga].x--;
+					}
+					tortugas[numTortuga].ubicada=true;
+					if (tortugas[numTortuga].getX() == islas[numIsla].limiteIzquierdo()) {
+						tortugas[numTortuga].derecha=true;
+					}
+					if (tortugas[numTortuga].getX() == islas[numIsla].limiteDerecho()) {
+						tortugas[numTortuga].ubicada=false;
+					}
+				}
+			}
+		}
 
 		// Generación de de islas por filas
-		for (int i=0;i<islas.length;i++){
+		for (int i = 0; i < islas.length; i++) {
 			islas[i].generarIslas(entorno);
 		}
-		
-		
-		
-		// Dibuja y toma el movimiento de Pep
-		pep.dibujarse(entorno);
-		
-		if (entorno.estaPresionada(entorno.TECLA_IZQUIERDA) && pep.getX() > 5 && pep.saltando==false)
-			pep.moverIzquierda();
-		if (entorno.estaPresionada(entorno.TECLA_DERECHA) && pep.getX() < entorno.ancho() - 5 && pep.saltando==false)
-			pep.moverDerecha();
-		if (entorno.sePresiono(entorno.TECLA_ARRIBA))
-		{
-			pep.saltando = true;
-			pep.salto(entorno);
-			
-			pep.saltando= false;
-			
-        	pep.VelocidadY = -15;
-		}
-		pep.caer(pep.saltando, pep.apoyado);
 	
 	
 		//dibujar gnomos
 		for(int i=0;  i<gnomos.length; i++) {
 
 			gnomos[i].dibujarse(entorno);
-			
-			
-			
+
 			
 			if(gnomos[i].apoyado) {
 				gnomos[i].seMueveDerecha();
