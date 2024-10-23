@@ -10,7 +10,8 @@ public class Tortugas {
 	public double x, y;
 	public double ancho, alto;	
 	public double velocidad;
-	public boolean ubicada;
+	public boolean apoyado;
+	public boolean enUnaIsla;
 	public boolean derecha;
 	
 	public Tortugas() {
@@ -34,22 +35,46 @@ public class Tortugas {
 		this.ancho=10;
 		this.alto=10;
 		this.velocidad = gen.nextInt(5) + 1;
-		this.ubicada=false;
+		this.apoyado=false;
 		
 	}
 	
-	public void dibujarse(Entorno entorno, boolean estaUbicada) {
-		if (this.y < 600 && ubicada==false) {
-			entorno.dibujarRectangulo(x, y, ancho, ancho, alto, Color.white);
-			this.y+=5;
-		}
-		else
-		{
+	public void dibujarse(Entorno entorno, boolean estaapoyado) {
+		if (this.y < 600) {
 			entorno.dibujarRectangulo(x, y, ancho, ancho, alto, Color.white);
 		}
 	}
 	
+	public void caer() {
+		if(!this.apoyado) {
+			this.y++;
+		}
+	}
 	
+	public void mover() {
+		if(derecha) {
+			this.x++;
+		}
+		else {
+			this.x--;
+		}
+	}
+	
+//	public void moverse(double extremo1, double extremo2) {
+//		boolean izquierda;
+//		boolean derecha;
+//		if(this.enUnaIsla) {
+//			}
+//			if(this.apoyado) {
+//				cambiarDireccion=false;
+//			}
+//			if(!this.apoyado) {
+//				cambiarDireccion=true;
+//			}
+//			if(derecha) {
+//				this.x++;
+//		}
+//	}
 //	public void velocidad() {
 //		if(colisionInferior==false)
 //		{
@@ -70,9 +95,9 @@ public class Tortugas {
 		return this.x;
 	}
 	
-	public boolean getUbicada()
+	public boolean getapoyado()
 	{
-		return this.ubicada;
+		return this.apoyado;
 	}
 	
 	public double limiteSuperior() 

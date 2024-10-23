@@ -7,20 +7,21 @@ import entorno.Entorno;
 public class Pep
 {
 	// Variables de instancia
-	private double x, y;
-	private double ancho;
-	private double alto;
+	public double x, y;
+	public double ancho;
+	public double alto;
 	public double VelocidadY = 0;
     public boolean saltando = false;
     public boolean mirandoDerecha = true;
     public boolean apoyado;
     public boolean chocaCon;
     public int contador=0;
+    public boolean tieneQueMoverse;
 
 	public Pep(double x, double y) {
 		this.x = x;
 		this.y = y;
-		this.ancho = 40;
+		this.ancho = 20;
 		this.alto = 40;
 	}
 
@@ -37,18 +38,20 @@ public class Pep
 	public void salto (Entorno entorno) {
 		if(apoyado) {
 			if (saltando) {
-	        	for (int i = 0; i < 120; i++) {
+	        	for (int i = 0; i < 60; i++) {
 	        		entorno.dibujarRectangulo(this.x, this.y, this.ancho, this.alto, 0, Color.red);
 	        		if(chocaCon == false) {
 	        			this.y--;
 	        		}
 	        	}
+	        	saltando = false;
+	        	tieneQueMoverse=true;
 	        }
-			saltando = false;
-			apoyado = false;
+			
 		}
         
     }
+	
 	
 	
 	public void caer() {
@@ -102,5 +105,8 @@ public class Pep
 	
 	public double limiteDerecho() {
 		return this.x + this.ancho/2;
+	}
+	public double centro() {
+		return this.x + (this.ancho/2);
 	}
 }
