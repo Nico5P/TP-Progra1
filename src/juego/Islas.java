@@ -38,6 +38,11 @@ public class Islas
 		return this.x+this.ancho/2;
 	}
 	
+    public double XdeIsla() //codigo usado para la generacion aleatoria de pep en las islas inferiores ya que se necesita el X para que este no se genere en el vacio  
+    {
+        return this.x;
+    }
+	
 	
 	public void generarIslas(Entorno e)
 	{

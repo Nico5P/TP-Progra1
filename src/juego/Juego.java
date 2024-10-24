@@ -13,15 +13,25 @@ public class Juego extends InterfaceJuego
 	
 	// Variables y métodos propios de cada grupo
 	// ...
+	
+	//todo lo relacionado y necesario para "islas"
+	int numIsla=0;
 	Islas[] islas;
+	
+	//todo lo relacionado y necesario para "pep"
 	Pep pep;
+
+	//todo lo relacionado y necesario para "tortugas"
 	Tortugas[] tortugas;
+	int numTortuga=0;
+	
+	//todo lo relacionado y necesario para "gnomos"
 //	Gnomos[] gnomos;
+	
+	//las variables de tiempo
 	int horas;
 	int minutos;
 	int segundos;
-	int numIsla=0;
-	int numTortuga=0;
 	
 	
 	Juego()
@@ -32,34 +42,44 @@ public class Juego extends InterfaceJuego
 		
 		// Inicializar lo que haga falta para el juego
 		
+		
+		// Generación de islas 
+		int islasPorFila = 5;
+		this.islas = new Islas[islasPorFila * (islasPorFila + 1) / 2];
+		double ejeY = 110;
+		int index = 0;
+
+		for (int fila = 0; fila < islasPorFila; fila++) 
+		{
+		    double ejeX = 400 - (fila * 80);
+		    for (int i = 0; i <= fila; i++) 
+		    {
+		        this.islas[index] = new Islas(ejeX, ejeY, 100, 20);
+		        ejeX += 100 + 60; 
+		        index++;
+		    }
+		    ejeY += 104;
+		}
+
+		
+		if (this.islas.length > 0)
+		{
+			//este condicional se asegura de que pep solo pueda aparecer en las islas del arreglo "inferior" para evitar que elija una superior y termine cayendose
+		    int filaInferior = islasPorFila - 1;
+		    int islasEnFilaInferior = filaInferior + 1;
+		    int primerIslaInferiorIndex = (islasPorFila * (islasPorFila - 1)) / 2;
+		    //mientras que este condicional elige una isla del arreglo anteriormente filtrado, al azar, y verifica su x para que pep pueda aparecer encima de una de ellas al iniciar el juego
+		    int islaAleatoriaIndex = primerIslaInferiorIndex + (int)(Math.random() * islasEnFilaInferior); 
+		    Islas islaSeleccionada = this.islas[islaAleatoriaIndex];
+		    pep = new Pep(islaSeleccionada.XdeIsla(), entorno.alto() - 110);
+		}
+
+
 		//Generación de tortugas
 		this.tortugas = new Tortugas[10];
 		for (int i = 0; i<this.tortugas.length; i++) {
 			this.tortugas[i] = new Tortugas();
 		}
-		
-		// Generación de de islas por filas
-		
-		int islasPorFila = 5;
-		this.islas = new Islas[islasPorFila * (islasPorFila + 1) / 2];
-		double ejeY = 110;
-		int index = 0;
-		
-		for(int fila = 0; fila < islasPorFila; fila++)
-		{
-			double ejeX = 400 - (fila*80);
-			for(int i = 0; i <= fila; i++)
-			{
-				this.islas[index] = new Islas(ejeX, ejeY, 100, 30) ;
-				
-				ejeX = ejeX+100+60; //
-				index++;
-			}
-			ejeY = ejeY+104;
-		}
-		
-		//Generar a Pep
-		pep = new Pep(400, entorno.alto()-110);
 		
 		//generar gnomos
 //		this.gnomos = new Gnomos[1];
@@ -91,80 +111,115 @@ public class Juego extends InterfaceJuego
 		horas = hor%60;
 		
 		
-		// Generación de Pep
-		//Colisiones de Pep
-		//El siguiente código comprueba si Pep está apoyado sobre una isla
-		boolean apoyadoEnAlgunaIsla = false; // Variable temporal
-		int enQueIslaEsta=0;
-		for (int numIsla=0; numIsla < islas.length; numIsla++) {
-			if (pep.limiteInferior() == islas[numIsla].limiteSuperior() 
-				&& pep.limiteIzquierdo() > islas[numIsla].limiteIzquierdo() - pep.ancho 
-				&& pep.limiteDerecho() < islas[numIsla].limiteDerecho() + pep.ancho) {
-				apoyadoEnAlgunaIsla = true; // Se ha encontrado una isla
-				enQueIslaEsta = numIsla;
-				break; // Salir del bucle, ya no es necesario seguir revisando
-			}
+		// Generación de de islas por filas
+		for (int i = 0; i < islas.length; i++) {
+			islas[i].generarIslas(entorno);
 		}
-		pep.apoyado = apoyadoEnAlgunaIsla; // Asignar el resultado final a pep
-				
-				
-		//Este código comprueba si Pep al saltar choca con el limite
-		//inferior o los límites laterales de aluna de las islas
-		boolean chocaConAlgunaIsla = false;
-		for (int numIsla=0; numIsla < islas.length; numIsla++) {
-			if (!pep.apoyado) {
-				// Comprobar colisiones
-				if (pep.limiteSuperior() == islas[numIsla].limiteInferior() || 
-						pep.limiteIzquierdo() == islas[numIsla].limiteDerecho() || 
-				        pep.limiteDerecho() == islas[numIsla].limiteIzquierdo()) {
-				        chocaConAlgunaIsla = true;
-				        break; // Salir del bucle si hay colisión
-				}
-			}
-		}
-		pep.chocaCon = chocaConAlgunaIsla;
-		
-		// Dibuja y toma el movimiento de Pep
-		
-		pep.dibujarse(entorno);
-		
-		if (entorno.estaPresionada(entorno.TECLA_IZQUIERDA) && pep.getX() > 5 && pep.apoyado == true)
-			pep.moverIzquierda();
-		if (entorno.estaPresionada(entorno.TECLA_DERECHA) && pep.getX() < entorno.ancho() - 5 && pep.apoyado == true)
-			pep.moverDerecha();
-		if (entorno.estaPresionada(entorno.TECLA_ARRIBA) && pep.apoyado == true)
-		{
-			pep.saltando = true;
-			pep.salto(entorno);
-			if(pep.tieneQueMoverse) {
-				for (int numIsla=0; numIsla < islas.length; numIsla++) {
-					double rangoDeCercaniaIzq = islas[numIsla].limiteIzquierdo()-30;
-					double rangoDeCercaniaDer = islas[numIsla].limiteDerecho()+30;
-					if(pep.centro() <= islas[numIsla].limiteIzquierdo() && pep.centro() >= rangoDeCercaniaIzq && pep.limiteInferior() >= islas[enQueIslaEsta].limiteSuperior()-110) {
-						pep.y=islas[enQueIslaEsta].limiteSuperior()-110-pep.alto;
-						pep.x=islas[numIsla].limiteIzquierdo();
-					}
-					if(pep.centro() >= islas[numIsla].limiteDerecho() && pep.centro() <= rangoDeCercaniaDer && pep.limiteInferior() >= islas[enQueIslaEsta].limiteSuperior()-110) {
-						pep.y=islas[enQueIslaEsta].limiteSuperior()-110-pep.alto;
-						pep.x=islas[numIsla].limiteDerecho()-pep.ancho;
-					}
-					pep.tieneQueMoverse=false;
-				}
-			}
-			if(!pep.apoyado || pep.chocaCon) {
-				pep.caer();
-			}
-		}
-		pep.caer();	
-//		if (pep.centro()==600) {
-//			pep.x=400;
-//			pep.y=(entorno.alto()-110);
-//		}
-		
-		
+	
+	
 		
 
+		// Generación y colisiones de Pep, este codigo se encarga de comprobar si pep esta sobre una isla y en cual
+		boolean apoyadoEnAlgunaIsla = false; // Variable temporal
+		int enQueIslaEsta = 0;
+
+		for (int numIsla = 0; numIsla < islas.length; numIsla++) 
+		{
+		    // 
+		    if (pep.limiteInferior() >= islas[numIsla].limiteSuperior() && 
+		        pep.limiteInferior() <= islas[numIsla].limiteSuperior() + 5 && // Esto es el margen, por decirlo asi
+		        pep.limiteIzquierdo() < islas[numIsla].limiteDerecho() && 
+		        pep.limiteDerecho() > islas[numIsla].limiteIzquierdo()) 
+		    {
+		        
+		        apoyadoEnAlgunaIsla = true; // Si se encuentra una isla la guarda y sale del bucle
+		        enQueIslaEsta = numIsla;
+		        break;
+		    }
+		}
+
+		pep.apoyado = apoyadoEnAlgunaIsla; // Asigna una isla a pep
+
+		// Este código comprueba si Pep al saltar llega al limite de salto 
+		// inferior o los límites laterales de alguna de las islas
+		boolean chocaConAlgunaIsla = false;
+		for (int numIsla = 0; numIsla < islas.length; numIsla++) 
+		{
+		    if (!pep.apoyado) 
+		    {
+		        if (pep.limiteSuperior() >= islas[numIsla].limiteInferior() && 
+		            (pep.limiteIzquierdo() <= islas[numIsla].limiteDerecho() && 
+		             pep.limiteDerecho() >= islas[numIsla].limiteIzquierdo())) 
+		        {
+		            chocaConAlgunaIsla = true; // Pep choca con la isla y sale del bucle si hay colision
+		            break; 
+		        }
+		    }
+		}
 		
+		pep.chocaCon = chocaConAlgunaIsla;
+
+		// Dibuja todo de Pep
+		pep.dibujarse(entorno);
+
+		if (!pep.apoyado) // Si pep no esta apoyado se cae 
+		{
+		    pep.caer(); 
+		}
+
+		if (pep.limiteInferior() > entorno.alto()) // Si cae al vacío resta una vida y pep vuelve a aparecer en la isla de donde cayo
+		{
+		    pep.contador--;
+		    pep.x = 400;
+		    pep.y = entorno.alto() - 110;
+		    pep.apoyado = true;
+		}
+
+		// Control de movimiento de pep
+		if (entorno.estaPresionada(entorno.TECLA_IZQUIERDA) && pep.getX() > 5 && pep.apoyado)
+		    pep.moverIzquierda();
+
+		if (entorno.estaPresionada(entorno.TECLA_DERECHA) && pep.getX() < entorno.ancho() - 5 && pep.apoyado)
+		    pep.moverDerecha();
+
+		if (entorno.estaPresionada(entorno.TECLA_ARRIBA) && pep.apoyado) {
+		    pep.salto();
+
+		    // Lógica para comprobar si puede subir a la isla
+		    if (pep.tieneQueMoverse) {
+		        for (int numIsla = 0; numIsla < islas.length; numIsla++) {
+		            double rangoDeCercaniaIzq = islas[numIsla].limiteIzquierdo() - 30;
+		            double rangoDeCercaniaDer = islas[numIsla].limiteDerecho() + 30;
+		            
+		            if (pep.centro() <= islas[numIsla].limiteIzquierdo() && 
+		                pep.centro() >= rangoDeCercaniaIzq && 
+		                pep.limiteInferior() >= islas[enQueIslaEsta].limiteSuperior() - 110) {
+		                
+		                pep.y = islas[numIsla].limiteSuperior() - 110 - pep.alto; // Ajusta la posición
+		                pep.x = islas[numIsla].limiteIzquierdo(); // Ajusta la posición
+		                pep.tieneQueMoverse = false; // No se moverá más
+		            }
+		            
+		            if (pep.centro() >= islas[numIsla].limiteDerecho() && 
+		                pep.centro() <= rangoDeCercaniaDer && 
+		                pep.limiteInferior() >= islas[enQueIslaEsta].limiteSuperior() - 110) {
+		                
+		                pep.y = islas[numIsla].limiteSuperior() - 110 - pep.alto; // Ajusta la posición
+		                pep.x = islas[numIsla].limiteDerecho() - pep.ancho; // Ajusta la posición
+		                pep.tieneQueMoverse = false; // No se moverá más
+		            }
+		        }
+		    }
+		}
+
+		// Llama a caer en el caso de que no esté apoyado
+		if (!pep.apoyado || pep.chocaCon) {
+		    pep.caer();
+		}
+	
+		
+	
+
 		//Generación de las tortugas			
 		if (segundos>0) { //Condicion para que se genere segundos despues de iniciar el juego
 			for (int i = 0; i < tortugas.length; i++) {
@@ -201,18 +256,7 @@ public class Juego extends InterfaceJuego
 			}
 		}
 
-		
 
-		// Generación de de islas por filas
-		for (int i = 0; i < islas.length; i++) {
-			islas[i].generarIslas(entorno);
-		}
-	
-	
-		
-		
-		
-		
 		
 		//dibujar gnomos
 		
