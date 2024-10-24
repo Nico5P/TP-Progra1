@@ -47,16 +47,16 @@ public class Juego extends InterfaceJuego
 		int islasPorFila = 5;
 		this.islas = new Islas[islasPorFila * (islasPorFila + 1) / 2];
 		double ejeY = 110;
-		int index = 0;
+		int isla = 0; //me olvide de aclarar que este "index" es un contador para asignar bien a las islas en el arreglo, por confusiones le voy a cambiar el nombre
 
 		for (int fila = 0; fila < islasPorFila; fila++) 
 		{
 		    double ejeX = 400 - (fila * 80);
 		    for (int i = 0; i <= fila; i++) 
 		    {
-		        this.islas[index] = new Islas(ejeX, ejeY, 100, 20);
+		        this.islas[isla] = new Islas(ejeX, ejeY, 100, 20);
 		        ejeX += 100 + 60; 
-		        index++;
+		        isla++;
 		    }
 		    ejeY += 104;
 		}
