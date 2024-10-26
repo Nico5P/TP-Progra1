@@ -2,6 +2,7 @@ package juego;
 
 
 import java.awt.Color;
+import java.util.Random;
 
 import entorno.Entorno;
 import entorno.InterfaceJuego;
@@ -16,12 +17,17 @@ public class Juego extends InterfaceJuego
 	Islas[] islas;
 	Pep pep;
 	Tortugas[] tortugas;
-//	Gnomos[] gnomos;
+	Gnomos[] gnomos;
+	
+	
+	int enPantalla=4;
 	int horas;
 	int minutos;
 	int segundos;
 	int numIsla=0;
 	int numTortuga=0;
+	int gnomosPerdidos=0;
+	int gnomosSalvados=0;
 	
 	
 	Juego()
@@ -62,11 +68,13 @@ public class Juego extends InterfaceJuego
 		pep = new Pep(400, entorno.alto()-110);
 		
 		//generar gnomos
-//		this.gnomos = new Gnomos[1];
-//		for(int i = 0; i<this.gnomos.length; i++) 
-//		{
-//			this.gnomos[i] = new Gnomos(400,islas[0].limiteSuperior()-10,10,20);
-//		}
+
+		gnomos=new Gnomos[6];
+		
+		for(int i = 0; i<gnomos.length; i++) 
+		{
+			this.gnomos[i] = new Gnomos(400,83,10,20);
+		}
 		
 		
 		// Inicia el juego!
@@ -156,10 +164,6 @@ public class Juego extends InterfaceJuego
 			}
 		}
 		pep.caer();	
-//		if (pep.centro()==600) {
-//			pep.x=400;
-//			pep.y=(entorno.alto()-110);
-//		}
 		
 		
 		
@@ -216,82 +220,75 @@ public class Juego extends InterfaceJuego
 		
 		//dibujar gnomos
 		
-//		for(int i=0;  i<gnomos.length; i++) {
-//		boolean fueraIsla=false;
-//		gnomos[i].dibujarse(entorno);
-//		
-//		
-////		if (gnomos[i].limiteInferior() == islas[i].limiteSuperior()) { 
-//			
-//			gnomos[i].seMueve();
-//		
-//		
-//		
-//		//este cae bien pero los if esta mal
-//			if(gnomos[i].limiteInferior() == islas[i].limiteSuperior() && gnomos[i].limiteIzquierdo() >islas[i].limiteDerecho()+5) {
-//				gnomos[i].y++;
-//				gnomos[i].x=islas[i].limiteDerecho()+5;
-//				fueraIsla=true;
-//			}
-//			else
-//			{
-//				if(gnomos[i].limiteDerecho() < islas[i].limiteIzquierdo()-5) {
-//					gnomos[i].y++;
-//					gnomos[i].x=islas[i].limiteIzquierdo()-5;
-//					fueraIsla=true;
-//				}
-//			}
-////		}
-//
-//		
-//	}
+		Random random = new Random();
+		for(Gnomos g: this.gnomos) {
+			if(g != null) {
+				g.dibujarse(entorno);
+				
+				boolean estaEnIsla=false;
+				int enIsla=0;
+				for(int j=0; j < islas.length; j++) {
+					if(g.limiteInferior() == islas[j].limiteSuperior() && g.limiteIzquierdo() > islas[j].limiteIzquierdo()
+							- g.ancho && g.limiteDerecho() < islas[j].limiteDerecho() + g.ancho) {
+							
+						estaEnIsla=true;
+						enIsla++;
+						break;
+					}
+				}
+					
+				g.apoyado=estaEnIsla;
+			}
+			if(g.apoyado) {
+				if(!g.mirar) {
+					g.caminar=random.nextBoolean();
+					g.mirar=true;
+				}
+				if(g.caminar) {
+					g.moverDerecho();
+				}else {
+					g.moverIzquierda();
+				}
+				
+				
+			}
+			else {
+				g.caida();
+				g.mirar=false;
+			}
+		
+		}
+		
+
 		
 		
 		
-//		 /*
-//		for(int i=0;  i<gnomos.length; i++) {
-//			boolean fueraIsla=true;
-//			gnomos[i].dibujarse(entorno);
-//			
-//			gnomos[i].seMueve();
-//			
-//			if(gnomos[i].limiteIzquierdo() >islas[i].limiteDerecho()+2) {
-//				gnomos[i].x=islas[i].limiteDerecho()+2;
-//				gnomos[i].y++;
-//				fueraIsla=true;
-//			}
-//			else
-//			{
-//				if(gnomos[i].limiteDerecho() < islas[i].limiteIzquierdo()-2) {
-//					gnomos[i].x=islas[i].limiteIzquierdo()-2;
-//					gnomos[i].y++;
-//					fueraIsla=true;
-//				}
-//			}
-//			
-//			if (gnomos[i].limiteInferior() == islas[i].limiteSuperior()) { 
-//				gnomos[i].apoyado = false; 
-//				
-//			} else {
-//				gnomos[i].apoyado = false; 
-//			}
-//			
-//		}
+		
+	
 	}
-		
-	
-////		*/boolean colsionGnomoisla(Gnomos g , Islas[]) {
-//	for (Islas isla: isla) {
-//		if(islas!=null) {
-//			if(g.limiteInferior()==isla.limiteSuperior() || g.limiteInferior()>isla.limiteSuperior()) && (g.limiteDerecho()>isla.limiteIzquierdo()) || g.limiteIzquierdo()<
-//		
-//	}
-//
-//	*/
 	
 	
 	
-	
+	//aun lo sigo pensando :)
+	public void gnomosSakvados(Gnomos[] g, Pep pep) {
+		if(g ==null) {
+			return;
+		}
+		for(Gnomos gn: this.gnomos) {
+			if(gn != null && !gn.isSalvado()) {
+				if(pep.limiteInferior() == gn.limiteSuperior() 
+						&& pep.limiteIzquierdo() > gn.limiteIzquierdo() - pep.ancho 
+						&& pep.limiteDerecho() < gn.limiteDerecho() + pep.ancho) {
+					gn=null;
+					gnomosSalvados++;
+					gn.salvar();
+					gn.volverASalir();
+					System.out.println("Gnome salvado: " + gn);
+				}
+			}
+		}
+	}
+
 
 	@SuppressWarnings("unused")
 	public static void main(String[] args)
