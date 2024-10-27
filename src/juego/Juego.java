@@ -18,6 +18,7 @@ public class Juego extends InterfaceJuego
 	Islas[] islas;
 	Tortugas[] tortugas;
 	Gnomos[] gnomos;
+	Navecita navecita;
 	
 	int islasPorFila;
 	int anchoIsla;
@@ -80,7 +81,7 @@ public class Juego extends InterfaceJuego
       	int anchoIsla = 100;
       	int altoIsla = 30;
       	int espacioHorizontal = 60;
-      	int espacioVertical = 104;
+      	int espacioVertical = 94;
       	double inicioY = 110;
       	
       	// Inicialización del arreglo de islas
@@ -110,8 +111,11 @@ public class Juego extends InterfaceJuego
       		Islas islaSeleccionada = this.islas[islaAleatoriaIndex];
       		
       		// Crear pep en la posición adecuada
-      		pep = crearPep(islaSeleccionada.x, entorno.alto() - inicioY);
+      		pep = crearPep(islaSeleccionada.x, entorno.alto() - inicioY - 40);
       	}
+      	
+      //Generación de la navecita
+      	navecita = new Navecita(370, 560);
 		
 		// Inicia el juego!
 		this.entorno.iniciar();
@@ -395,6 +399,16 @@ public class Juego extends InterfaceJuego
 		if (!pep.apoyado || pep.chocaCon) {
 		    pep.caer();
 		}
+		
+		//dibujar navecita
+		navecita.dibujarse(entorno);
+		if (entorno.estaPresionado(entorno.BOTON_IZQUIERDO)) {
+////		nave.encender(); // Para cambiar la imagen a nave encendida
+			navecita.moverseHacia(entorno.mouseX());
+		}
+//		else {
+//			nave.apagar(); // Para cambiar la imagen a nave apagada
+//		}
 	}
 	
 	
@@ -405,6 +419,11 @@ public class Juego extends InterfaceJuego
 		for(int i=0; i <gnomos.length; i++) {
 			Gnomos g=gnomos[i];
 			if(g!= null && g.colisionaCon(pep) && pep.getY() > 350) {
+				g.seReinicia(400, 83,10,20);
+				gnomosSalvados++;
+				break;
+			}
+			if(g!= null && g.colisionNavecita(navecita)) {
 				g.seReinicia(400, 83,10,20);
 				gnomosSalvados++;
 				break;

@@ -87,6 +87,13 @@ public class Gnomos {
                 this.y + this.alto > t.getY());
     }
     
+    public boolean colisionNavecita(Navecita n) {
+    	return (this.x < n.getX() + n.ancho &&
+                this.x + this.ancho > n.getX() &&
+                this.y < n.getY() + n.alto &&
+                this.y + this.alto > n.getY());
+    }
+    
     
     public void seReinicia(double nuevaX, double nuevaY, double ancho, double alto) {
     	this.x=nuevaX;
