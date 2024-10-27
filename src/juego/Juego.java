@@ -110,7 +110,7 @@ public class Juego extends InterfaceJuego
       		Islas islaSeleccionada = this.islas[islaAleatoriaIndex];
       		
       		// Crear pep en la posición adecuada
-      		pep = crearPep(islaSeleccionada.getX(), entorno.alto() - inicioY);
+      		pep = crearPep(islaSeleccionada.x, entorno.alto() - inicioY);
       	}
 		
 		// Inicia el juego!
@@ -247,32 +247,41 @@ public class Juego extends InterfaceJuego
 						break;
 					}
 				}
-					g.apoyado=estaEnIsla;}
-						if(g.apoyado) 
-						{
-						if(!g.mirar) 
-						{
-							g.caminar=random.nextBoolean();
-							g.mirar=true;
-						}
-						if(g.caminar) 
-						{
-							g.moverDerecho();
-						}
-						else 
-						{
-							g.moverIzquierda();
-						}
-						
-						
-					}
-					else 
-					{
-						g.caida();
-						g.mirar=false;
-					}
-				
+				g.apoyado=estaEnIsla;
+			}
+			
+					
+			if(g.apoyado) 
+			{
+				if(!g.mirar) 
+				{
+					g.caminar=random.nextBoolean();
+					g.mirar=true;
 				}
+				if(g.caminar) 
+				{
+					g.moverDerecho();
+				}
+				else 
+				{
+					g.moverIzquierda();
+				}
+						
+						
+			}
+			else 
+			{
+				g.caida();
+				g.mirar=false;
+			}
+			gnomosSalvados(g,pep);
+			
+			for(Tortugas t:this.tortugas) {
+				gnomosPerdidos(g,t);
+			}
+			
+				
+		}
 		   
 		
 		// Generación de de islas por filas
@@ -387,6 +396,46 @@ public class Juego extends InterfaceJuego
 		    pep.caer();
 		}
 	}
+	
+	
+	public void gnomosSalvados(Gnomos gn, Pep pep) {
+		if(gn ==null) {
+			return;
+		}
+		for(int i=0; i <gnomos.length; i++) {
+			Gnomos g=gnomos[i];
+			if(g!= null && g.colisionaCon(pep) && pep.getY() > 350) {
+				g.seReinicia(400, 83,10,20);
+				gnomosSalvados++;
+				break;
+			}
+		}	
+	}
+	
+	public void gnomosPerdidos(Gnomos gn, Tortugas t) {
+		if(gn ==null) {
+			return;
+		}
+		
+		for(int i=0; i<gnomos.length; i++) {
+			Gnomos g=gnomos[i];
+			for(Tortugas tortugas: this.tortugas) {
+				if(tortugas !=null && g.colisionTortugas(t)) {
+					g.seReinicia(400, 83,10,20);
+					gnomosPerdidos++;
+					break;
+				}
+			}
+			if(g.limiteSuperior() > 600) {
+				g.seReinicia(400,83, 10, 20);
+				gnomosPerdidos++;
+			}
+		}
+	}
+	
+	
+	
+	
 	
     private void dibujarStats() {
         entorno.cambiarFont("Arial", 20, Color.BLACK);

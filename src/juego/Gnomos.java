@@ -55,15 +55,15 @@ public class Gnomos {
 		
 	}
 	
-	public boolean isSalvado()
-	{
-        return salvado;
-    }
-
-    public void salvar()
-    {
-        salvado = true;
-    }
+//	public boolean isSalvado()
+//	{
+//        return salvado;
+//    }
+//
+//    public void salvar()
+//    {
+//        salvado = true;
+//    }
 
     public void volverASalir() 
     {
@@ -71,6 +71,36 @@ public class Gnomos {
         this.posicionY = this.y;
         salvado=false;
     }
+    
+    
+    public boolean colisionaCon(Pep p) {
+        return (this.x < p.getX() + p.ancho &&
+                this.x + this.ancho > p.getX() &&
+                this.y < p.getY() + p.alto &&
+                this.y + this.alto > p.getY());
+    }
+    
+    public boolean colisionTortugas(Tortugas t) {
+        return (this.x < t.getX() + t.ancho &&
+                this.x + this.ancho > t.getX() &&
+                this.y < t.getY() + t.alto &&
+                this.y + this.alto > t.getY());
+    }
+    
+    
+    public void seReinicia(double nuevaX, double nuevaY, double ancho, double alto) {
+    	this.x=nuevaX;
+    	this.y=nuevaY;
+    	this.ancho=ancho;
+    	this.alto=alto;
+    	this.salvado=false;
+    }
+    
+    
+    
+    
+    
+    
     
     public double limiteSuperior() 
     {

@@ -14,6 +14,10 @@ public class Tortugas {
 	public boolean enUnaIsla;
 	public boolean derecha;
 	
+	double posicionX;
+	double posicionY;
+	boolean salvado;
+	
 	public Tortugas() {
 		
 		Random gen = new Random();
@@ -83,7 +87,19 @@ public class Tortugas {
 //		}
 //	}
 //	
+    public void reiniciarToruga() 
+    {
+        this.posicionX = this.x;
+        this.posicionY = this.y;
+        salvado=false;
+    }
 	
+	public boolean colisionaCon(Pep p) {
+        return (this.x < p.getX() + p.ancho &&
+                this.x + this.ancho > p.getX() &&
+                this.y < p.getY() + p.alto &&
+                this.y + this.alto > p.getY());
+    }
 	
 	public double getY() 
 	{
