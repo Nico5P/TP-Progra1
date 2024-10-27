@@ -9,20 +9,16 @@ import entorno.Entorno;
 public class Gnomos {
 	double x, y;
 	double ancho, alto;
+	double velocidad =1;
+	double ticks;
+	double posicionX;
+	double posicionY;
+	boolean derecha=false;
 	boolean apoyado;
 	boolean direccion;
-	double velocidad =1;
-	boolean derecha=false;
-	double ticks;
 	boolean caminar=false; 
 	boolean mirar=false; 
-	
-
-	
-	private boolean salvado;
-    private double posicionX; // Suponiendo que tiene una posición X
-    private double posicionY;
-	
+	boolean salvado;
 	
 	public Gnomos(double x, double y, double ancho, double alto)
 	{
@@ -31,70 +27,67 @@ public class Gnomos {
 		this.ancho=ancho;
 		this.alto=alto;
 		this.direccion= Math.random() <0.5;
-		
-		
 	}
 	
-	public void dibujarse(Entorno entorno) {
+	public void dibujarse(Entorno entorno)
+	{
 		entorno.dibujarRectangulo(x, y, ancho, alto,0, Color.yellow);
 	}
 	
 
-	public void caida() {
+	public void caida()
+	{
 		if(!apoyado) {
 			this.y+=2;
 		}
 	}
 	
 
-	public void moverIzquierda() {
+	public void moverIzquierda()
+	{
         	this.x+=velocidad;
-        	// Cambia a izquierda
         
     }
 	
-	public void moverDerecho() {
+	public void moverDerecho()
+	{
 			this.x -=velocidad;
 		
 	}
 	
-	
-
-	public double limiteSuperior() 
+	public boolean isSalvado()
 	{
-		return this.y - this.alto/2;
-	}
-	
-	public double limiteInferior() 
-	{
-		return this.y + this.alto/2;
-	}
-	
-	public double limiteIzquierdo() 
-	{
-		return this.x-this.ancho/2;
-	}
-	public double limiteDerecho() 
-	{
-		return this.x+this.ancho/2;
-	}
-	
-	
-	public boolean isSalvado() {
         return salvado;
     }
 
-    public void salvar() {
+    public void salvar()
+    {
         salvado = true;
     }
 
-    public void volverASalir() {
-        // Reinicia su posición a la inicial o la que desees
-        this.posicionX = this.x;/* posición inicial */;
-        this.posicionY = this.y;/* posición inicial */;
+    public void volverASalir() 
+    {
+        this.posicionX = this.x;
+        this.posicionY = this.y;
         salvado=false;
     }
-	
-
-
+    
+    public double limiteSuperior() 
+    {
+    	return this.y - this.alto/2;
+    }
+    
+    public double limiteInferior() 
+    {
+    	return this.y + this.alto/2;
+    }
+    
+    public double limiteIzquierdo() 
+    {
+    	return this.x-this.ancho/2;
+    }
+    public double limiteDerecho() 
+    {
+    	return this.x+this.ancho/2;
+    }
 }
