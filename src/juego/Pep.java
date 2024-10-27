@@ -50,7 +50,7 @@ public class Pep
 		if (apoyado) 
 		{ 
 			saltando = true;
-			VelocidadY = 9; 
+			VelocidadY = 11.3; 
 			apoyado = false; 
 		}
 	}
@@ -71,10 +71,6 @@ public class Pep
 		{
 			this.y += 2; // sino esta apoyado aumenta "Y" para simular la "caida"
 		}
-
-		// Aquí puedes incluir la lógica para determinar si Pep vuelve a estar apoyado
-		// Ejemplo: si toca el suelo, establece apoyado a true.
-		// apoyado = (this.y >= alturaDelSuelo); // Define la altura del suelo adecuadamente
 	}
 
 	public void dibujarse(Entorno entorno) 
