@@ -5,7 +5,6 @@ import java.awt.Color;
 import entorno.Entorno;
 
 public class Navecita {
-	
 	public double x, y;
 	public double ancho;
 	public double alto;
@@ -30,8 +29,6 @@ public class Navecita {
 			this.x = this.x;
 		}
 	}
-	
-	
 	
 	public void dibujarse(Entorno entorno) {
 		entorno.dibujarRectangulo(this.x, this.y, this.ancho, this.alto, 0, Color.magenta);

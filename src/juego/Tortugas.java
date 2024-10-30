@@ -7,30 +7,69 @@ import java.awt.Color;
 public class Tortugas {
 	Entorno[] entorno;
 	Islas[] islas;
-	public double x, y;
-	public double ancho, alto;	
-	public double velocidad;
-	public boolean apoyado;
-	public boolean enUnaIsla;
-	public boolean derecha;
-	
+	double x, y;
+	double ancho, alto;	
+	double velocidad;
 	double posicionX;
 	double posicionY;
+	boolean apoyado;
+	boolean enUnaIsla;
+	boolean derecha;
 	boolean salvado;
 	
+	
+	/*considerar implementar
+	 * 
+	 *     public Tortugas() {
+        Random gen = new Random();
+        this.x = gen.nextDouble() * 800; // Posición aleatoria en X
+        this.y = 0; // Y = 0 al iniciar
+        this.ancho = 10;
+        this.alto = 10;
+        this.velocidad = gen.nextInt(5) + 1;
+        this.apoyado = false;
+        this.derecha = gen.nextBoolean(); // Dirección aleatoria
+    }
+
+    public void dibujarse(Entorno entorno) {
+        if (this.y < 600) {
+            entorno.dibujarRectangulo(x, y, ancho, alto, Color.white);
+        }
+    }
+    
+    public void caer() {
+        if (!this.apoyado) {
+            this.y++;
+        }
+    }
+    
+    public void mover() {
+        if (derecha) {
+            this.x++;
+        } else {
+            this.x--;
+        }
+    }
+
+    public void setEstadoCayendo(boolean cayendo) {
+        this.apoyado = !cayendo; // Si está cayendo, no está apoyada
+    }
+
+    public void tortugas(double x, double y) {
+        this.x = x;
+        this.y = y;
+    }
+	 */
 	public Tortugas() {
-		
 		Random gen = new Random();
 		double xSpawn1 = gen.nextInt(350) + 1;
 		double xSpawn2 = gen.nextInt(800) + 470;
 		int dondeSpawnea= gen.nextInt(2) + 1;
-		if(dondeSpawnea>1)
-		{
+		if(dondeSpawnea>1) {
 			this.x = xSpawn2;
 			this.derecha=true;
 		}
-		else
-		{
+		else {
 			this.x = xSpawn1;
 			this.derecha=false;
 		}
@@ -87,18 +126,25 @@ public class Tortugas {
 //		}
 //	}
 //	
-    public void reiniciarToruga() 
+    public void reiniciarTortuga() 
     {
         this.posicionX = this.x;
         this.posicionY = this.y;
         salvado=false;
     }
 	
-	public boolean colisionaCon(Pep p) {
-        return (this.x < p.getX() + p.ancho &&
-                this.x + this.ancho > p.getX() &&
-                this.y < p.getY() + p.alto &&
-                this.y + this.alto > p.getY());
+    public boolean colisionIslas(Islas i) {
+    	return (this.limiteIzquierdo() < i.limiteDerecho() &&
+    			this.limiteDerecho() > i.limiteIzquierdo() &&
+    			this.limiteSuperior() < i.limiteInferior() &&
+    			this.limiteInferior() > i.limiteSuperior());
+    }
+    
+    public boolean colisionFuego(BoladeFuego b) {
+        return (this.limiteIzquierdo() < b.limiteDerecho() &&
+                this.limiteDerecho() > b.limiteIzquierdo() &&
+                this.limiteSuperior() < b.limiteInferior() &&
+                this.limiteInferior() > b.limiteSuperior());
     }
 	
 	public double getY() 

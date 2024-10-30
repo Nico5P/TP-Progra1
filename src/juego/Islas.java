@@ -16,6 +16,10 @@ public class Islas {
         this.alto = alto;
     }
 
+    public void generarIslas(Entorno e) {
+        e.dibujarRectangulo(this.x, this.y, this.ancho, this.alto, 0, Color.blue);
+    }
+    
     public double limiteSuperior() {
         return this.y - this.alto / 2;
     }
@@ -42,9 +46,5 @@ public class Islas {
 
     public double area() {
         return this.ancho * this.alto;
-    }
-
-    public void generarIslas(Entorno e) {
-        e.dibujarRectangulo(this.x, this.y, this.ancho, this.alto, 0, Color.blue);
     }
 }

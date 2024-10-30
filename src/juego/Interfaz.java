@@ -34,18 +34,23 @@ public class Interfaz {
         int alto = entorno.alto();
         entorno.cambiarFont("Arial", 30, java.awt.Color.WHITE);
         
-        // Mensaje de pausa
-        entorno.escribirTexto("Juego Pausado", ancho / 2 - 100, alto / 2 - 50);
+        /*
+         * Dibuja "Pausa" en el menu de pausa
+         */
         
-        // Opción "Continuar"
+        entorno.escribirTexto("Pausa", ancho / 2 - 100, alto / 2 - 50);
+        
+        /*
+         * Dibuja la opcion "continuar" y "reiniciar" y le cambia el color a la seleccionada
+         * para que el usuario sepa cual esta por escoger
+         */
         if (seleccion == 0) {
             entorno.cambiarFont("Arial", 30, java.awt.Color.YELLOW);
         } else {
             entorno.cambiarFont("Arial", 30, java.awt.Color.WHITE);
         }
         entorno.escribirTexto("Continuar", ancho / 2 - 50, alto / 2);
-
-        // Opción "Reiniciar"
+        
         if (seleccion == 1) {
             entorno.cambiarFont("Arial", 30, java.awt.Color.YELLOW);
         } else {

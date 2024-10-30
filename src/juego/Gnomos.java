@@ -20,8 +20,7 @@ public class Gnomos {
 	boolean mirar=false; 
 	boolean salvado;
 	
-	public Gnomos(double x, double y, double ancho, double alto)
-	{
+	public Gnomos(double x, double y, double ancho, double alto) {
 		this.x=x;
 		this.y=y;
 		this.ancho=ancho;
@@ -29,62 +28,46 @@ public class Gnomos {
 		this.direccion= Math.random() <0.5;
 	}
 	
-	public void dibujarse(Entorno entorno)
-	{
+	public void dibujarse(Entorno entorno) {
 		entorno.dibujarRectangulo(x, y, ancho, alto,0, Color.yellow);
 	}
-	
 
-	public void caida()
-	{
+	public void caida() {
 		if(!apoyado) {
 			this.y+=2;
 		}
 	}
 	
 
-	public void moverIzquierda()
-	{
+	public void moverIzquierda() {
         	this.x+=velocidad;
         
     }
 	
-	public void moverDerecho()
-	{
+	public void moverDerecho() {
 			this.x -=velocidad;
 		
 	}
 	
-//	public boolean isSalvado()
-//	{
-//        return salvado;
-//    }
-//
-//    public void salvar()
-//    {
-//        salvado = true;
-//    }
-
-    public void volverASalir() 
-    {
+    public void volverASalir() {
         this.posicionX = this.x;
         this.posicionY = this.y;
         salvado=false;
     }
     
     
-    public boolean colisionaCon(Pep p) {
-        return (this.x < p.getX() + p.ancho &&
-                this.x + this.ancho > p.getX() &&
-                this.y < p.getY() + p.alto &&
-                this.y + this.alto > p.getY());
-    }
-    
     public boolean colisionTortugas(Tortugas t) {
-        return (this.x < t.getX() + t.ancho &&
-                this.x + this.ancho > t.getX() &&
-                this.y < t.getY() + t.alto &&
-                this.y + this.alto > t.getY());
+        return (this.limiteIzquierdo() < t.limiteDerecho() &&
+                this.limiteDerecho() > t.limiteIzquierdo() &&
+                this.limiteSuperior() < t.limiteInferior() &&
+                this.limiteInferior() > t.limiteSuperior());
+    }
+
+    public boolean colisionIslas(Islas i) {
+        return (this.limiteIzquierdo() < i.limiteDerecho() &&
+                this.limiteDerecho() > i.limiteIzquierdo() &&
+                this.limiteSuperior() < i.limiteInferior() &&
+                this.limiteInferior() > i.limiteSuperior());
     }
     
     public boolean colisionNavecita(Navecita n) {
@@ -94,7 +77,6 @@ public class Gnomos {
                 this.y + this.alto > n.getY());
     }
     
-    
     public void seReinicia(double nuevaX, double nuevaY, double ancho, double alto) {
     	this.x=nuevaX;
     	this.y=nuevaY;
@@ -102,12 +84,6 @@ public class Gnomos {
     	this.alto=alto;
     	this.salvado=false;
     }
-    
-    
-    
-    
-    
-    
     
     public double limiteSuperior() 
     {
