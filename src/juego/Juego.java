@@ -29,8 +29,8 @@ public class Juego extends InterfaceJuego
 	int gnomosPerdidos;
 	int gnomosSalvados;
 	int gnomosEnPantalla;
-	int numTortuga;
-	int tortugasEliminadas;
+	int tortEliminadas;
+	int tortEnPantalla;
 	int numIsla;
 	int horas;
 	int minutos;
@@ -42,9 +42,6 @@ public class Juego extends InterfaceJuego
     boolean gnomoGenerado;
     int enQueIslaEsta;
     int conQueIslaChoca;
-    double ultimaPosX;
-    double ultimaPosY;
-    
     
 	
     public Juego() {
@@ -58,7 +55,7 @@ public class Juego extends InterfaceJuego
         generarTortugas();
         generarGnomos();
         generarIslas();
-        crearPep();
+        generarPep();
         generarNavecita();
 
         /*
@@ -71,7 +68,7 @@ public class Juego extends InterfaceJuego
     	this.tiempoJugando = 0;
     	this.gnomosSalvados = 0;
     	this.gnomosPerdidos=0;
-    	this.tortugasEliminadas = 0;
+    	this.tortEliminadas = 0;
 
     }
 
@@ -85,7 +82,7 @@ public class Juego extends InterfaceJuego
     }
 
     private void generarTortugas() {
-        this.tortugas = new Tortugas[10];
+        this.tortugas = new Tortugas[5];
         for (int i = 0; i < this.tortugas.length; i++) {
             this.tortugas[i] = new Tortugas();
         }
@@ -96,7 +93,7 @@ public class Juego extends InterfaceJuego
         gnomos = new Gnomos[4];
         cooldownGnomos=false;
         actualizarTiempo();
-        for (int i = 0; i < gnomos.length; i++) 
+        for (int i = 0; i < gnomos.length;) 
         {
         	if(gnomosEnPantalla!=4 && cooldownGnomos && !gnomoGenerado) {
         		this.gnomos[i] = new Gnomos(400, 83, 10, 20);
@@ -137,16 +134,16 @@ public class Juego extends InterfaceJuego
     }
 
 
-    private void crearPep() {
+    private void generarPep() {
         if (this.islas.length > 0) {
             int primerIslaInferiorIndex = (islasPorFila * (islasPorFila - 1)) / 2;
             int islaAleatoriaIndex = primerIslaInferiorIndex + (int)(Math.random() * islasPorFila); // Selección aleatoria
             Islas islaSeleccionada = this.islas[islaAleatoriaIndex];
-            pep = crearPep(islaSeleccionada.x, entorno.alto() - 110 - 40);
+            pep = generarPep(islaSeleccionada.x, 480);
         }
     }
 
-    public Pep crearPep(double x, double y) 
+    public Pep generarPep(double x, double y) 
     {
     	return new Pep(x, y);
     }
@@ -179,13 +176,14 @@ public class Juego extends InterfaceJuego
 
         actualizarTiempo();
         estadisticas();
-        comprobarGameOver();
-        funcionamientoGnomos();
         generarIslas();
+        
+        funcionamientoTortugas();
+        funcionamientoGnomos();
         funcionamientoDePep();
+        funcionamientoBolaDeFuego();
         controlarMovimientoPep();
         dibujarNave();
-        funcionamientoBolaDeFuego();
     }
 
 
@@ -213,12 +211,6 @@ public class Juego extends InterfaceJuego
 		{
 			cooldownGnomos=false;
 		}
-	}
-
-	private void comprobarGameOver() {
-	    if (vidas < 0) {
-	        reiniciar();
-	    }
 	}
 
 	private void funcionamientoGnomos() {
@@ -294,6 +286,58 @@ public class Juego extends InterfaceJuego
 //	    }
 	}
 
+	private void funcionamientoTortugas() {
+		Random random1=new Random();
+		for(int i=0; i<tortugas.length; i++) {
+				Tortugas t1= tortugas[i];
+				if(t1!=null) {
+					t1.dibujarse(entorno, Jugando);
+//					t.caer();
+					estadoTortugas(t1,random1);
+				}
+		}
+	}
+	
+	public void estadoTortugas(Tortugas t, Random random1) {
+		boolean enIsla= false;
+		boolean otro=false;
+		for(Islas isla:islas) {
+			//Ver si la tortuga toca la isla(?
+			if(t.limiteInferior() == isla.limiteSuperior()&&
+					t.limiteIzquierdo()> isla.limiteIzquierdo()-t.ancho &&
+					t.limiteDerecho()< isla.limiteDerecho()+t.ancho) {
+				enIsla=true;
+				t.apoyado=true;
+				iniciarMovHorizontal(t, random1, isla);
+				otro=true;
+				break;
+			}
+		}
+		if(!enIsla) {
+			t.apoyado=false;
+			t.mira=false;
+			t.caer();
+		}
+			
+	}
+	
+	private void iniciarMovHorizontal(Tortugas t, Random random1, Islas isla) {
+//
+
+		t.mover(); // Mueve la tortuga en la dirección actual
+		
+	    if (t.caminar) {
+	        if (t.limiteIzquierdo() >= isla.limiteDerecho() - (t.ancho / 2)) {
+	            t.caminar = false; // Cambiar dirección a izquierda
+	        }
+	    } else {
+	        if (t.limiteDerecho() <= isla.limiteIzquierdo() + (t.ancho / 2)) {
+	            t.caminar = true; // Cambiar dirección a derecha
+	        }
+	    }
+		
+	}
+
 	
 	/*
 	 * El metodo se encarga de dibujar a pep
@@ -301,10 +345,6 @@ public class Juego extends InterfaceJuego
 	
 	private void funcionamientoDePep() {
 	    pep.dibujarse(entorno);
-	    
-	    // Guardar la posicion actual para que al morir pep aparezca en la ultima isla donde estuvo
-	    ultimaPosX = pep.getX();
-	    ultimaPosY = pep.getY();
 	    
 	    //Compruebo si Pep esta apoyado sobre una isla
 
@@ -347,10 +387,12 @@ public class Juego extends InterfaceJuego
 	    }
 
 	    if (pep.limiteInferior() > entorno.alto()) {
-	        pep.x = ultimaPosX;
-	        pep.y = ultimaPosY;
+	    	generarPep();
 	        pep.apoyado = true;
 	        vidas--;
+	        if (vidas < 0) {
+		        generarPep();
+		    }
 	    }
 	}
 
@@ -370,7 +412,7 @@ public class Juego extends InterfaceJuego
 	            Tortugas t = tortugas[i];
 	            if (t != null && bolaDeFuego.colisionTortugas(t)) {
 	                tortugas[i] = null;
-	                tortugasEliminadas++;
+	                tortEliminadas++;
 	            }
 	        }
 
@@ -536,14 +578,15 @@ public class Juego extends InterfaceJuego
     private void estadisticas() {      
         entorno.cambiarFont("Arial", 20, Color.BLACK);
         entorno.escribirTexto("Vidas: " + vidas, 10, 20);
-        entorno.escribirTexto("Gnomos Salvados: " + gnomosSalvados, 10, 40);
-        entorno.escribirTexto("Gnomos Perdidos: " + gnomosPerdidos, 10, 60);
-        entorno.escribirTexto("Gnomos en Pantalla: " + gnomosEnPantalla, 10, 80);
-        entorno.escribirTexto("Tortugas Asesinadas: " + tortugasEliminadas, 10, 100);
-        entorno.escribirTexto("Tiempo: " + minutos + ":" + segundos, 10, 120);
-        entorno.escribirTexto("Pep Y Inf: " + pep.limiteInferior(), 10, 140);
-        entorno.escribirTexto("Pep X Izq: " + pep.limiteIzquierdo(), 10, 160);
-        entorno.escribirTexto("Pep X Der: " + pep.limiteDerecho(), 10, 180);
+        entorno.escribirTexto("Gnomos en Pantalla: " + gnomosEnPantalla, 10, 40);
+        entorno.escribirTexto("Gnomos Salvados: " + gnomosSalvados, 10, 60);
+        entorno.escribirTexto("Gnomos Perdidos: " + gnomosPerdidos, 10, 80);
+        entorno.escribirTexto("Tortugas en Pantalla: " + tortEnPantalla, 10, 100);
+        entorno.escribirTexto("Tortugas Asesinadas: " + tortEliminadas, 10, 120);
+        entorno.escribirTexto("Tiempo: " + minutos + ":" + segundos, 10, 140);
+        entorno.escribirTexto("Pep Y Inf: " + pep.limiteInferior(), 10, 180);
+        entorno.escribirTexto("Pep X Izq: " + pep.limiteIzquierdo(), 10, 200);
+        entorno.escribirTexto("Pep X Der: " + pep.limiteDerecho(), 10, 220);
         
         }
     
@@ -558,8 +601,8 @@ public class Juego extends InterfaceJuego
     	tiempoJugando = 0;
     	gnomosSalvados = 0;
     	gnomosPerdidos=0;
-    	tortugasEliminadas = 0;
-    	pep = crearPep(400, entorno.alto() - 150);
+    	tortEliminadas = 0;
+    	pep = generarPep(400, 480);
     }
 	
 	@SuppressWarnings("unused")
