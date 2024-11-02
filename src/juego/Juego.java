@@ -40,6 +40,7 @@ public class Juego extends InterfaceJuego
     boolean Jugando;
     boolean cooldownGnomos;
     boolean gnomoGenerado;
+    int esperaGnomos;
     int enQueIslaEsta;
     int conQueIslaChoca;
     double ultimaPosX;
@@ -98,13 +99,12 @@ public class Juego extends InterfaceJuego
         actualizarTiempo();
         for (int i = 0; i < gnomos.length; i++) 
         {
-        	if(gnomosEnPantalla!=4 && cooldownGnomos && !gnomoGenerado) {
+        	if(gnomosEnPantalla!=4 && cooldownGnomos) { //Condición para que pueda generarse un gnomo nuevo
         		this.gnomos[i] = new Gnomos(400, 83, 10, 20);
                 gnomosEnPantalla++;
-                 
+                gnomoGenerado=true; //Condición para que no se generen todos los gnomos juntos. Cambia el valor de cooldownGnomos
+                break;
         	}
-        	gnomoGenerado=true; 
-        	break;
         }
     }
     
@@ -197,22 +197,21 @@ public class Juego extends InterfaceJuego
 		int hor= min/60;
 		horas = hor%60;
 		
-		if(segundos%10==0) //Calculo el tiempo de esepra para que pueda generarse otro gnomo
+		if(segundos%10==0 && !gnomoGenerado) //Calculo el tiempo de esepra para que pueda generarse otro gnomo
 		{
-			if(!gnomoGenerado) {
+			if(!gnomoGenerado) { //Condicion para que pueda generarse otro Gnomo
 				cooldownGnomos=true;
 			}
-			if(gnomoGenerado) {
-				if(segundos%5==0) {
-					cooldownGnomos=false;
-					gnomoGenerado=false;
-				}
-			}
+		}
+		else if(segundos%15==0 && gnomoGenerado){ //Condicion para cambiar el estado de gnomoGenerado a false
+			cooldownGnomos=false;
+			gnomoGenerado=false;
 		}
 		else 
 		{
 			cooldownGnomos=false;
 		}
+		
 	}
 
 	private void comprobarGameOver() {
