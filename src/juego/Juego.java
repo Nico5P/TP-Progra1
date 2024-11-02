@@ -38,6 +38,10 @@ public class Juego extends InterfaceJuego
 	int tiempoJugando;
 	int tiempoActual = tiempoJugando;
     boolean Jugando;
+    boolean cooldownGnomos;
+    boolean gnomoGenerado;
+    int enQueIslaEsta;
+    int conQueIslaChoca;
     double ultimaPosX;
     double ultimaPosY;
     
@@ -86,11 +90,21 @@ public class Juego extends InterfaceJuego
             this.tortugas[i] = new Tortugas();
         }
     }
-
+    
     private void generarGnomos() {
-        gnomos = new Gnomos[6];
-        for (int i = 0; i < gnomos.length; i++) {
-            this.gnomos[i] = new Gnomos(400, 83, 10, 20);
+    	gnomosEnPantalla = 0;
+        gnomos = new Gnomos[4];
+        cooldownGnomos=false;
+        actualizarTiempo();
+        for (int i = 0; i < gnomos.length; i++) 
+        {
+        	if(gnomosEnPantalla!=4 && cooldownGnomos && !gnomoGenerado) {
+        		this.gnomos[i] = new Gnomos(400, 83, 10, 20);
+                gnomosEnPantalla++;
+                 
+        	}
+        	gnomoGenerado=true; 
+        	break;
         }
     }
     
@@ -177,10 +191,28 @@ public class Juego extends InterfaceJuego
 
 	private void actualizarTiempo() {
 	    int sec = entorno.tiempo() / 1000;
-	    segundos = sec % 60;
-	    int min = sec / 60;
-	    minutos = min % 60;
-	    horas = min / 60 % 60;
+	    segundos= sec%60;
+		int min = sec/60;
+		minutos= min%60;
+		int hor= min/60;
+		horas = hor%60;
+		
+		if(segundos%10==0) //Calculo el tiempo de esepra para que pueda generarse otro gnomo
+		{
+			if(!gnomoGenerado) {
+				cooldownGnomos=true;
+			}
+			if(gnomoGenerado) {
+				if(segundos%5==0) {
+					cooldownGnomos=false;
+					gnomoGenerado=false;
+				}
+			}
+		}
+		else 
+		{
+			cooldownGnomos=false;
+		}
 	}
 
 	private void comprobarGameOver() {
@@ -191,10 +223,40 @@ public class Juego extends InterfaceJuego
 
 	private void funcionamientoGnomos() {
 	    Random random = new Random();
-	    for (Gnomos g : this.gnomos) {
+	    for(int i=0; i<gnomos.length;i++) {
+	    	Gnomos g=gnomos[i];
+	    	actualizarTiempo();
+	    	if(g==null && cooldownGnomos && !gnomoGenerado) {
+	    		gnomos[i]= new Gnomos(400,83,10,20);
+	    		gnomoGenerado=true;
+	    	}
 	        if (g != null) {
 	            g.dibujarse(entorno);
 	            EstadoDeGnomos(g, random);
+	            
+	            if (pep.colisionGnomos(g)&& pep.getY() > 350) {
+	                gnomos[i] = null;  
+	                gnomosSalvados++;
+	            }
+	            
+	            if(g!= null && g.colisionNavecita(navecita)) {
+//					g.seReinicia(400, 83,10,20);
+					gnomos[i]=null;
+					gnomosSalvados++;
+					
+				}
+	            
+	            for (Tortugas t : tortugas) {
+	                if (t != null && g.colisionTortugas(t)) {
+	                	gnomos[i] = null; 
+	                    gnomosPerdidos++;
+	                }
+	            }
+	            
+	            if (g.limiteSuperior() > entorno.alto()) {
+	            	gnomos[i] = null; 
+	                gnomosPerdidos++;
+	            }
 	        }
 	    }
 	}
@@ -225,11 +287,11 @@ public class Juego extends InterfaceJuego
 	        g.caida();
 	        g.mirar = false;
 	    }
-	    gnomosSalvados(g, pep);
-
-	    for (Tortugas t : this.tortugas) {
-	        gnomosPerdidos(g, t);
-	    }
+//	    gnomosSalvados(g, pep);
+//
+//	    for (Tortugas t : this.tortugas) {
+//	        gnomosPerdidos(g, t);
+//	    }
 	}
 
 	
@@ -243,6 +305,8 @@ public class Juego extends InterfaceJuego
 	    // Guardar la posicion actual para que al morir pep aparezca en la ultima isla donde estuvo
 	    ultimaPosX = pep.getX();
 	    ultimaPosY = pep.getY();
+	    
+	    //Compruebo si Pep esta apoyado sobre una isla
 
 	    boolean apoyadoEnAlgunaIsla = false;
 
@@ -252,12 +316,31 @@ public class Juego extends InterfaceJuego
 	            pep.limiteIzquierdo() < islas[numIsla].limiteDerecho() &&
 	            pep.limiteDerecho() > islas[numIsla].limiteIzquierdo()) {
 	            apoyadoEnAlgunaIsla = true;
+	            enQueIslaEsta = numIsla; //Guardo el indice de la isla sobre la que Pep esta apoyado
 	            break;
 	        }
 	    }
-
+	    
 	    pep.apoyado = apoyadoEnAlgunaIsla;
-	    pep.chocaCon = !apoyadoEnAlgunaIsla;
+	    
+	    //Compruebo si el limite superior de Pep colisiona con el limite inferior de una isla
+	    
+	    boolean debajoDeUnaIsla = false;
+	    
+	    for (int numIsla = 0; numIsla < islas.length; numIsla++) {
+	    	if (pep.limiteSuperior() >= islas[numIsla].limiteInferior() &&
+		        pep.limiteIzquierdo() <= islas[numIsla].limiteDerecho() + pep.ancho + 3 &&
+		        pep.limiteDerecho() >= islas[numIsla].limiteIzquierdo() - pep.ancho - 3) {
+	    		conQueIslaChoca = numIsla; //Guardo el indice de la isla con la que pep colisiona
+	    		if(islas[enQueIslaEsta].limiteSuperior() <= islas[conQueIslaChoca].limiteInferior()-110 &&
+	    			islas[enQueIslaEsta].limiteSuperior() >= islas[conQueIslaChoca].limiteInferior()-90) {
+	    			debajoDeUnaIsla = true;
+	    			break;
+	    		}	
+	    	}
+	    }
+	    
+	    pep.debajoDe = debajoDeUnaIsla;
 
 	    if (!pep.apoyado) {
 	        pep.caer();
@@ -347,24 +430,26 @@ public class Juego extends InterfaceJuego
 	            double limiteDer = isla.limiteDerecho();
 	            double rangoCercaniaIzq = limiteIzq - 30;
 	            double rangoCercaniaDer = limiteDer + 30;
-
-	            if (pep.limiteInferior() >= isla.limiteSuperior() - 110) {
+	            
+	          //Comprueba si Pep tiene su limite inferior por encima del limite superior de la isla a la que va a saltar
+	            if (pep.limiteInferior() >= islas[enQueIslaEsta].limiteSuperior() - 110) {
 	                if (pep.centro() <= limiteIzq && pep.centro() >= rangoCercaniaIzq) {
-	                    pep.y = isla.limiteSuperior() - 110 - pep.alto;
-	                    pep.x = limiteIzq;
-	                    pep.tieneQueMoverse = false;
+	                	pep.mirandoDerecha = true;
 	                    break;
 	                }
 
 	                if (pep.centro() >= limiteDer && pep.centro() <= rangoCercaniaDer) {
 	                    pep.y = isla.limiteSuperior() - 110 - pep.alto;
 	                    pep.x = limiteDer - pep.ancho;
-	                    pep.tieneQueMoverse = false;
+	                    pep.mirandoDerecha = false;
 	                    break;
 	                }
 	            }
 	        }
+	        
 	    }
+	    pep.tieneQueAsomarse();
+        pep.acercarse();
 	}
 
 	/*
@@ -391,24 +476,24 @@ public class Juego extends InterfaceJuego
 	 * de ser el caso tambien incrementa "gnomosSalvados"
 	 */
 	
-	public void gnomosSalvados(Gnomos gn, Pep pep) {
-		if(gn ==null) {
-			return;
-		}
-		for(int i=0; i <gnomos.length; i++) {
-			Gnomos g=gnomos[i];
-			if(g!= null && pep.colisionGnomos(g) && pep.getY() > 350) {
-				g.seReinicia(400, 83,10,20);
-				gnomosSalvados++;
-				break;
-			}
-			if(g!= null && g.colisionNavecita(navecita)) {
-				g.seReinicia(400, 83,10,20);
-				gnomosSalvados++;
-				break;
-			}
-		}	
-	}
+//	public void gnomosSalvados(Gnomos gn, Pep pep) {
+//		if(gn ==null) {
+//			return;
+//		}
+//		for(int i=0; i <gnomos.length; i++) {
+//			Gnomos g=gnomos[i];
+//			if(g!= null && pep.colisionGnomos(g) && pep.getY() > 350) {
+//				g.seReinicia(400, 83,10,20);
+//				gnomosSalvados++;
+//				break;
+//			}
+//			if(g!= null && g.colisionNavecita(navecita)) {
+//				g.seReinicia(400, 83,10,20);
+//				gnomosSalvados++;
+//				break;
+//			}
+//		}	
+//	}
 	
 	/*
 	 * Comprueba si el gnomo es null, de serlo, termina la comprobacion
@@ -421,26 +506,26 @@ public class Juego extends InterfaceJuego
 	 * de ser el caso tambien incrementa "gnomosPerdidos"
 	 */
 	
-	public void gnomosPerdidos(Gnomos gn, Tortugas t) {
-		if(gn ==null) {
-			return;
-		}
-		
-		for(int i=0; i<gnomos.length; i++) {
-			Gnomos g=gnomos[i];
-			for(Tortugas tortugas: this.tortugas) {
-				if(tortugas !=null && g.colisionTortugas(t)) {
-					g.seReinicia(400, 83,10,20);
-					gnomosPerdidos++;
-					break;
-				}
-			}
-			if(g.limiteSuperior() > 600) {
-				g.seReinicia(400,83, 10, 20);
-				gnomosPerdidos++;
-			}
-		}
-	}
+//	public void gnomosPerdidos(Gnomos gn, Tortugas t) {
+//		if(gn ==null) {
+//			return;
+//		}
+//		
+//		for(int i=0; i<gnomos.length; i++) {
+//			Gnomos g=gnomos[i];
+//			for(Tortugas tortugas: this.tortugas) {
+//				if(tortugas !=null && g.colisionTortugas(t)) {
+//					g.seReinicia(400, 83,10,20);
+//					gnomosPerdidos++;
+//					break;
+//				}
+//			}
+//			if(g.limiteSuperior() > 600) {
+//				g.seReinicia(400,83, 10, 20);
+//				gnomosPerdidos++;
+//			}
+//		}
+//	}
 	
 	/*
 	 * Muestra todas las estadisticas en pantalla
@@ -449,10 +534,6 @@ public class Juego extends InterfaceJuego
 	 */
 	
     private void estadisticas() {      
-    	
-        int minutos = (tiempoJugando / 60) / 60;
-        int segundos = tiempoJugando / 60;
-        
         entorno.cambiarFont("Arial", 20, Color.BLACK);
         entorno.escribirTexto("Vidas: " + vidas, 10, 20);
         entorno.escribirTexto("Gnomos Salvados: " + gnomosSalvados, 10, 40);

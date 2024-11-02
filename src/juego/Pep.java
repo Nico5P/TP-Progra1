@@ -9,11 +9,15 @@ public class Pep {
 	public double ancho; 
 	public double alto;
 	public double VelocidadY = 0; // Velocidad a la que salta
+	public double VelocidadX = 0;
     public boolean saltando = false; // Para saber si pep esta saltando o no
     public boolean mirandoDerecha = true; // Dirección de Pep
     public boolean apoyado;
     public boolean chocaCon;
+    public boolean debajoDe;
     public boolean tieneQueMoverse;
+    public boolean moviendose;
+    public boolean salto;
 
 	public Pep(double x, double y) {
 		this.x = x; 
@@ -41,17 +45,24 @@ public class Pep {
 	public void salto() { // Método para saltar
 		if (apoyado) { 
 			saltando = true;
-			VelocidadY = 16; 
+			if(!debajoDe) {
+				VelocidadY = 16;
+			}
+			else {
+				VelocidadY = 9;
+			}
 			apoyado = false; 
 		}
 	}
 
 	public void caer() { // Maneja la caida de pep
 		if (saltando) {
+			moviendose = false;
 			this.y -= VelocidadY; // "Sube" a pep
 			VelocidadY -= 1; //
 			if (VelocidadY <= 0) { // Cambia el estado al llegar al "limite" de alto permitido en su salto 
 				saltando = false;
+				salto = true;
 			}
 		} 
 		
@@ -59,7 +70,37 @@ public class Pep {
 			this.y += 2; // sino esta apoyado aumenta "Y" para simular la "caida"
 		}
 	}
-
+	//Si Pep encuentra una isla cercana, en este método se genera un valor para que pueda comenzar a acercarse a la Isla
+	public void tieneQueAsomarse() { 
+		if(salto && !saltando) {
+			VelocidadX = 16;
+			moviendose = true;
+//			tieneQueMoverse=false; //Ya no necesito este boolean, solo sirve para inicializar VelocidadX
+		}
+	}
+	
+	//Una vez que tenemos la variable VelocidadX para que pep se acerque gradualmente a la isla, ejecutamos el
+	//codigo que lleva a cabo este movimiento
+	public void acercarse() 
+	{
+		if(moviendose && salto) 
+		{
+			if(mirandoDerecha) 
+			{
+				this.x += VelocidadX; //Suma al valor de x si Pep esta mirando a la derecha
+			}
+			else 
+			{
+				this.x -= VelocidadX; //Resta al valor de x si Pep esta mirando a la derecha
+			}
+			VelocidadX -= 0.5; //Resta gradualmente la distancia a la que Pep se debe acercar
+			if (VelocidadX <= 0) 
+			{
+				moviendose=false;
+				salto=false;
+			}
+		}
+	}
 	public void dibujarse(Entorno entorno) {
 		entorno.dibujarRectangulo(this.x, this.y, this.ancho, this.alto, 0, Color.red);
 	}
