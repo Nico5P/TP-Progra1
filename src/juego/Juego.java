@@ -3,8 +3,9 @@ package juego;
 
 import java.awt.Color;
 import java.util.Random;
-
+import java.awt.Image;
 import entorno.Entorno;
+import entorno.Herramientas;
 import entorno.InterfaceJuego;
 
 public class Juego extends InterfaceJuego
@@ -20,6 +21,8 @@ public class Juego extends InterfaceJuego
 	BoladeFuego bolaDeFuego;
 	
 	// Variables y métodos propios de cada grupo
+	Image fondo;
+	Image casa;
 	int islasPorFila;
 	int anchoIsla;
 	int altoIsla;
@@ -44,6 +47,7 @@ public class Juego extends InterfaceJuego
     int conQueIslaChoca;
     double ultimaPosX;
     double ultimaPosY;
+    boolean disparo;
     
     
 	
@@ -60,6 +64,9 @@ public class Juego extends InterfaceJuego
         generarIslas();
         crearPep();
         generarNavecita();
+//        if(disparo) {
+//        	generarBolaDeFuego();
+//        }
 
         /*
          * Inicia el juego cargando los valores iniciales
@@ -78,6 +85,7 @@ public class Juego extends InterfaceJuego
     private void iniciarJuego() {
         this.entorno = new Entorno(this, "Proyecto para TP; Balbi, Gomez, Pereira, Pereyra", 800, 600);
         entorno.colorFondo(Color.pink);
+        fondo = Herramientas.cargarImagen("juego/imagenes/fondo.jpg");
     }
 
     private void iniciarInterfaz() {
@@ -96,10 +104,9 @@ public class Juego extends InterfaceJuego
         gnomos = new Gnomos[4];
         cooldownGnomos=false;
         actualizarTiempo();
-        for (int i = 0; i < gnomos.length; i++) 
-        {
+        for (Gnomos g : gnomos){
         	if(gnomosEnPantalla!=4 && cooldownGnomos && !gnomoGenerado) {
-        		this.gnomos[i] = new Gnomos(400, 83, 10, 20);
+        		g = new Gnomos(400, 83, 10, 20);
                 gnomosEnPantalla++;
                  
         	}
@@ -133,6 +140,7 @@ public class Juego extends InterfaceJuego
 
         for (Islas isla : islas) {
             isla.generarIslas(entorno);
+            isla.dibujarIslas(entorno);
         }
     }
 
@@ -172,6 +180,7 @@ public class Juego extends InterfaceJuego
             return; // No actualiza el juego si está pausado
         }
         if (Jugando) {
+        	entorno.dibujarImagen(fondo, 400, 300, 0, 0.3); // Fondo del juego
             tiempoJugando++; //Aumenta el contador de tiempo en pantalla
         } else {
             tiempoJugando = tiempoActual; //Si se pausa el juego lo detiene y muestra el ultimo valor
@@ -197,17 +206,13 @@ public class Juego extends InterfaceJuego
 		int hor= min/60;
 		horas = hor%60;
 		
-		if(segundos%10==0) //Calculo el tiempo de esepra para que pueda generarse otro gnomo
+		if(segundos%10==0 && !gnomoGenerado) //Calculo el tiempo de esepra para que pueda generarse otro gnomo
 		{
-			if(!gnomoGenerado) {
-				cooldownGnomos=true;
-			}
-			if(gnomoGenerado) {
-				if(segundos%5==0) {
-					cooldownGnomos=false;
-					gnomoGenerado=false;
-				}
-			}
+			cooldownGnomos=true;
+		}
+		else if(segundos%15==0 && gnomoGenerado) { //Condicion para cambiar el estado de gnomoGenerado a false
+			cooldownGnomos=false;
+			gnomoGenerado=false;
 		}
 		else 
 		{
@@ -362,43 +367,21 @@ public class Juego extends InterfaceJuego
 	 * desaparecera
 	 */
 
-	private void funcionamientoBolaDeFuego() {
-	    if (bolaDeFuego != null && bolaDeFuego.fueDisparada()) {
-	        bolaDeFuego.disparo();
-
-	        for (int i = 0; i < tortugas.length; i++) {
-	            Tortugas t = tortugas[i];
-	            if (t != null && bolaDeFuego.colisionTortugas(t)) {
-	                tortugas[i] = null;
-	                tortugasEliminadas++;
-	            }
-	        }
-
-	        if (bolaDeFuego.getX() < 0 || bolaDeFuego.getX() > entorno.ancho()) {
-	            bolaDeFuego = null;
-	        }
-	    }
-
-	    if (bolaDeFuego != null) {
-	        bolaDeFuego.dibujarse(entorno);
-	    }
-	}
-    
+	
     /*
      * Controla el movimiento de pep mediante las entradas del teclado
      */
     
     private void controlarMovimientoPep() {
         boolean puedeMoverse = pep.apoyado;
-
-        if (entorno.estaPresionada(entorno.TECLA_ABAJO) && pep.getX() > 5 && pep.ultimaDireccion()) {
-            if (bolaDeFuego == null || !bolaDeFuego.fueDisparada()) {
-            //    bolaDeFuego = new BolaDeFuego(pep.getX(), pep.getY(), pep.ultimaDireccion());  no me funciona
-            }
-        }
-
-        if (bolaDeFuego != null && bolaDeFuego.fueDisparada()) {
-            bolaDeFuego.disparo();
+      
+        if (entorno.estaPresionada(entorno.TECLA_ABAJO) && puedeMoverse && bolaDeFuego==null) {  //Pep solo puede disparar si esta apoyado y si no hay ninguna bola de fuego en pantalla
+        	if(pep.mirandoDerecha) {  //Si pep mira hacia la derecha dispara hacia la derecha. Caso contrario, dispara hacia la izquierda.
+        		bolaDeFuego = new BoladeFuego(pep.limiteDerecho()+8, pep.y-5, pep.mirandoDerecha); //numero 8=mitad del ancho de la bola de fuego
+        	}
+        	else {
+        		bolaDeFuego = new BoladeFuego(pep.limiteIzquierdo()-8, pep.y-5, pep.mirandoDerecha);
+        	} 
         }
 
 	    if (entorno.estaPresionada(entorno.TECLA_IZQUIERDA) && pep.getX() > 5 && puedeMoverse) {
@@ -418,6 +401,30 @@ public class Juego extends InterfaceJuego
 	        pep.caer();
 	    }
 	}
+    
+    private void funcionamientoBolaDeFuego() {
+    	if (bolaDeFuego != null) {
+	        bolaDeFuego.dibujarse(entorno);
+	    }
+	    if (bolaDeFuego != null && bolaDeFuego.disparada) {
+	        bolaDeFuego.disparo();
+
+	        for (int i = 0; i < tortugas.length; i++) {
+	            Tortugas t = tortugas[i];
+	            if (t != null && bolaDeFuego.colisionTortugas(t)) {
+	                tortugas[i] = null;
+	                tortugasEliminadas++;
+	            }
+	        }
+
+	        if (bolaDeFuego.getX() < 0 || bolaDeFuego.getX() > entorno.ancho()) {
+	            bolaDeFuego = null;
+	        }
+	    }
+
+	    
+	}
+    
 
 	/*
 	 * Verifica si pep puede moverse preguntando en que isla se encuentra para poder posicionarlo

@@ -1,7 +1,10 @@
 package juego;
 
 import entorno.Entorno;
+import entorno.Herramientas;
+
 import java.awt.Color;
+import java.awt.Image;
 
 public class BoladeFuego {
 	 double x, y;
@@ -11,19 +14,24 @@ public class BoladeFuego {
 	 boolean disparada; //Se usa para saber si fue disparada
 	 boolean direccionDerecha; //Direccion en la que se movera
 	 boolean direccion;
+	 Image imagen;
 	 
-	 public void bolaDeFuego(double x, double y, boolean direccion) {
+
+	public BoladeFuego(double x, double y, boolean direccion) {
 	        this.x = x;
 	        this.y = y;
 	        this.direccion = direccion;
 	        this.velocidad = 10; // Ajusta la velocidad según sea necesario
+	        this.alto=16;
+	        this.ancho=16;
 	        this.disparada = true;
+	        this.imagen = Herramientas.cargarImagen("juego/imagenes/bolaDeFuego.webp");
 	 }
 	 
 	 public void disparo() {
-		 if (direccion) {
+		 if (direccion && x<810) {
 			 x += velocidad; // Mover hacia la derecha
-		 } else {
+		 } else if (!direccion && x>-10){
 			 x -= velocidad; // Mover hacia la izquierda
 		 }
 	 }
@@ -34,12 +42,8 @@ public class BoladeFuego {
 		 if (disparada) 
 		 {
 			 entorno.dibujarRectangulo(x, y, ancho, alto, 0, Color.orange);
+			 
 		 }
-	 }
-	 
-	 public boolean fueDisparada() 
-	 {
-		 return disparada;
 	 }
 	 
 	 public boolean colisionTortugas(Tortugas t) {
