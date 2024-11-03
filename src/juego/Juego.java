@@ -33,6 +33,7 @@ public class Juego extends InterfaceJuego
 	int gnomosSalvados;
 	int gnomosEnPantalla;
 	int numTortuga;
+	int tortugasEnPantalla;
 	int tortugasEliminadas;
 	int numIsla;
 	int horas;
@@ -93,7 +94,9 @@ public class Juego extends InterfaceJuego
     }
 
     private void generarTortugas() {
-        this.tortugas = new Tortugas[10];
+    	tortugasEnPantalla=0;
+        this.tortugas = new Tortugas[4];
+        
         for (int i = 0; i < this.tortugas.length; i++) {
             this.tortugas[i] = new Tortugas();
         }
@@ -195,6 +198,7 @@ public class Juego extends InterfaceJuego
         controlarMovimientoPep();
         dibujarNave();
         funcionamientoBolaDeFuego();
+        funcionamientoTortugas();
     }
 
 
@@ -303,6 +307,67 @@ public class Juego extends InterfaceJuego
 	/*
 	 * El metodo se encarga de dibujar a pep
 	 */
+	
+	private void funcionamientoTortugas() {
+		Random random1=new Random();
+		for(int i=0; i<tortugas.length; i++) {
+				Tortugas t1= tortugas[i];
+				if(t1!=null) {
+					t1.dibujarse(entorno, Jugando);
+//					t.caer();
+					estadoTortugas(t1,random1);
+				}
+		}
+	}
+	
+	public void estadoTortugas(Tortugas t, Random random1) {
+		boolean enIsla= false;
+		for(Islas isla:islas) {
+			//Ver si la tortuga toca la isla(?
+			if(t.limiteInferior() == isla.limiteSuperior()&&
+					t.limiteIzquierdo()> isla.limiteIzquierdo()-t.ancho &&
+					t.limiteDerecho()< isla.limiteDerecho()+t.ancho) {
+				enIsla=true;
+				t.apoyado=true;
+				iniciarMovHorizontal(t, random1, isla);
+				break;
+			}
+		}
+		if(!enIsla) {
+			t.apoyado=false;
+			t.mira=false;
+			t.caer();
+		}
+			
+	}
+	
+	private void iniciarMovHorizontal(Tortugas t, Random random1, Islas isla) {
+		t.mover();
+		
+		if(!t.mira) {
+			t.caminar=random1.nextBoolean();
+			t.mira=true;
+		}
+
+		if(t.caminar) {
+			if(t.limiteIzquierdo()>= isla.limiteDerecho() - (t.ancho /2)) {
+				t.caminar=false;
+			}
+		}
+		else {
+			
+			if(t.limiteDerecho()<= isla.limiteIzquierdo() + (t.ancho /2)) {
+				t.caminar=true;
+				}
+			}
+		
+	}
+	
+	
+	
+	
+	
+	
 	
 	private void funcionamientoDePep() {
 	    pep.dibujarse(entorno);

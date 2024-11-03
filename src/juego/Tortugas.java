@@ -9,57 +9,20 @@ public class Tortugas {
 	Islas[] islas;
 	double x, y;
 	double ancho, alto;	
-	double velocidad;
+	double velocidad=1;
 	double posicionX;
 	double posicionY;
 	boolean apoyado;
 	boolean enUnaIsla;
 	boolean derecha;
 	boolean salvado;
+	boolean caminar;
+	boolean mira;
+	boolean lado;
+	boolean movimientoDerecha;
 	
 	
-	/*considerar implementar
-	 * 
-	 *     public Tortugas() {
-        Random gen = new Random();
-        this.x = gen.nextDouble() * 800; // Posición aleatoria en X
-        this.y = 0; // Y = 0 al iniciar
-        this.ancho = 10;
-        this.alto = 10;
-        this.velocidad = gen.nextInt(5) + 1;
-        this.apoyado = false;
-        this.derecha = gen.nextBoolean(); // Dirección aleatoria
-    }
-
-    public void dibujarse(Entorno entorno) {
-        if (this.y < 600) {
-            entorno.dibujarRectangulo(x, y, ancho, alto, Color.white);
-        }
-    }
-    
-    public void caer() {
-        if (!this.apoyado) {
-            this.y++;
-        }
-    }
-    
-    public void mover() {
-        if (derecha) {
-            this.x++;
-        } else {
-            this.x--;
-        }
-    }
-
-    public void setEstadoCayendo(boolean cayendo) {
-        this.apoyado = !cayendo; // Si está cayendo, no está apoyada
-    }
-
-    public void tortugas(double x, double y) {
-        this.x = x;
-        this.y = y;
-    }
-	 */
+	
 	public Tortugas() {
 		Random gen = new Random();
 		double xSpawn1 = gen.nextInt(350) + 1;
@@ -74,65 +37,36 @@ public class Tortugas {
 			this.derecha=false;
 		}
 
-		this.y = gen.nextInt(20) + 1;
-		this.ancho=10;
-		this.alto=10;
-		this.velocidad = gen.nextInt(5) + 1;
+
+		this.ancho=18;
+		this.alto=18;
+
 		this.apoyado=false;
-		
+		this.caminar=true;
 	}
 	
 	public void dibujarse(Entorno entorno, boolean estaapoyado) {
-		if (this.y < 600) {
+		if ( this.y < 600) {
 			entorno.dibujarRectangulo(x, y, ancho, ancho, alto, Color.white);
 		}
 	}
 	
 	public void caer() {
-		if(!this.apoyado) {
-			this.y++;
+		if(!this.apoyado) { 
+			this.y+=1;
 		}
 	}
 	
 	public void mover() {
-		if(derecha) {
-			this.x++;
-		}
-		else {
-			this.x--;
-		}
+        if (caminar) {
+        	this.x +=0.5; // Mover a la derecha
+        } else {
+        	this.x -=0.5; // Mover a la izquierda
+        }
 	}
+
 	
-//	public void moverse(double extremo1, double extremo2) {
-//		boolean izquierda;
-//		boolean derecha;
-//		if(this.enUnaIsla) {
-//			}
-//			if(this.apoyado) {
-//				cambiarDireccion=false;
-//			}
-//			if(!this.apoyado) {
-//				cambiarDireccion=true;
-//			}
-//			if(derecha) {
-//				this.x++;
-//		}
-//	}
-//	public void velocidad() {
-//		if(colisionInferior==false)
-//		{
-//			this.y+= this.velocidad*0.001;
-//			this.x+=this.velocidad*0.001;
-//		}
-//	}
-//	
-    public void reiniciarTortuga() 
-    {
-        this.posicionX = this.x;
-        this.posicionY = this.y;
-        salvado=false;
-    }
-	
+
     public boolean colisionIslas(Islas i) {
     	return (this.limiteIzquierdo() < i.limiteDerecho() &&
     			this.limiteDerecho() > i.limiteIzquierdo() &&
