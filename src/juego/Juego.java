@@ -33,7 +33,6 @@ public class Juego extends InterfaceJuego
 	int gnomosSalvados;
 	int gnomosEnPantalla;
 	int numTortuga;
-	int tortugasEnPantalla;
 	int tortugasEliminadas;
 	int numIsla;
 	int horas;
@@ -44,6 +43,9 @@ public class Juego extends InterfaceJuego
     boolean Jugando;
     boolean cooldownGnomos;
     boolean gnomoGenerado;
+    boolean tortugaGenerada;
+    boolean cooldownTortugas;
+    int tEnPantalla;
     int enQueIslaEsta;
     int conQueIslaChoca;
     double ultimaPosX;
@@ -94,17 +96,21 @@ public class Juego extends InterfaceJuego
     }
 
     private void generarTortugas() {
-    	tortugasEnPantalla=0;
-        this.tortugas = new Tortugas[4];
-        
+    	tEnPantalla=0;
+        this.tortugas = new Tortugas[5];
+        cooldownTortugas=false;
         for (int i = 0; i < this.tortugas.length; i++) {
-            this.tortugas[i] = new Tortugas();
+        	if(tEnPantalla !=4 && cooldownTortugas && !tortugaGenerada) {
+        		this.tortugas[i] = new Tortugas();
+        		tEnPantalla++;
+        	}
+            
         }
     }
     
     private void generarGnomos() {
     	gnomosEnPantalla = 0;
-        gnomos = new Gnomos[4];
+        gnomos = new Gnomos[6];
         cooldownGnomos=false;
         actualizarTiempo();
         for (Gnomos g : gnomos){
@@ -210,7 +216,7 @@ public class Juego extends InterfaceJuego
 		int hor= min/60;
 		horas = hor%60;
 		
-		if(segundos%10==0 && !gnomoGenerado) //Calculo el tiempo de esepra para que pueda generarse otro gnomo
+		if(segundos%5==0 && !gnomoGenerado) //Calculo el tiempo de esepra para que pueda generarse otro gnomo
 		{
 			cooldownGnomos=true;
 		}
@@ -221,6 +227,19 @@ public class Juego extends InterfaceJuego
 		else 
 		{
 			cooldownGnomos=false;
+		}
+		
+		if(segundos%5==0 && !tortugaGenerada) //Calculo el tiempo de esepra para que pueda generarse otro gnomo
+		{
+			cooldownTortugas=true;
+		}
+		else if(segundos%15==0 && tortugaGenerada) { //Condicion para cambiar el estado de gnomoGenerado a false
+			cooldownTortugas=false;
+			tortugaGenerada=false;
+		}
+		else 
+		{
+			cooldownTortugas=false;
 		}
 	}
 
@@ -239,7 +258,7 @@ public class Juego extends InterfaceJuego
 	    		gnomos[i]= new Gnomos(400,83,10,20);
 	    		gnomoGenerado=true;
 	    	}
-	        if (g != null) {
+	    	if (g != null) {
 	            g.dibujarse(entorno);
 	            EstadoDeGnomos(g, random);
 	            
@@ -296,13 +315,8 @@ public class Juego extends InterfaceJuego
 	        g.caida();
 	        g.mirar = false;
 	    }
-//	    gnomosSalvados(g, pep);
-//
-//	    for (Tortugas t : this.tortugas) {
-//	        gnomosPerdidos(g, t);
-//	    }
-	}
 
+	}
 	
 	/*
 	 * El metodo se encarga de dibujar a pep
@@ -312,11 +326,31 @@ public class Juego extends InterfaceJuego
 		Random random1=new Random();
 		for(int i=0; i<tortugas.length; i++) {
 				Tortugas t1= tortugas[i];
+				
+				if(t1==null && cooldownTortugas && !tortugaGenerada) {
+					tortugas[i]=new Tortugas();
+					tortugaGenerada=true;
+				}
+				
+				
 				if(t1!=null) {
 					t1.dibujarse(entorno, Jugando);
-//					t.caer();
+
 					estadoTortugas(t1,random1);
-				}
+					
+					if(tortugas[i].limiteSuperior() > entorno.alto()) {
+						tortugas[i]= null;
+						tortugasEliminadas++;
+						break;
+					}
+		
+					if (bolaDeFuego !=null && bolaDeFuego.colisionTortugas(t1)) {
+						tortugas[i]= null;
+			                
+						tortugasEliminadas++;
+						break;
+					}
+				}        
 		}
 	}
 	
@@ -362,9 +396,6 @@ public class Juego extends InterfaceJuego
 			}
 		
 	}
-	
-	
-	
 	
 	
 	
@@ -417,10 +448,22 @@ public class Juego extends InterfaceJuego
 	    }
 
 	    if (pep.limiteInferior() > entorno.alto()) {
-	        pep.x = ultimaPosX;
-	        pep.y = ultimaPosY;
+	        pep.x = 400;
+	        pep.y = 480;
 	        pep.apoyado = true;
 	        vidas--;
+	    }
+	    
+	    for(int i=0; i< tortugas.length; i++) {
+	    	Tortugas t=tortugas[i];
+	    	if(t!=null) {
+	    		if(pep.colisionTortugas(t)) {
+	    			 pep.x = 400;
+	    			 pep.y = 480;
+	    			 pep.apoyado = true;
+	    			 vidas--;
+	    		}
+	    	}
 	    }
 	}
 
@@ -473,18 +516,12 @@ public class Juego extends InterfaceJuego
 	    }
 	    if (bolaDeFuego != null && bolaDeFuego.disparada) {
 	        bolaDeFuego.disparo();
-
-	        for (int i = 0; i < tortugas.length; i++) {
-	            Tortugas t = tortugas[i];
-	            if (t != null && bolaDeFuego.colisionTortugas(t)) {
-	                tortugas[i] = null;
-	                tortugasEliminadas++;
-	            }
-	        }
-
+	        
+	        
 	        if (bolaDeFuego.getX() < 0 || bolaDeFuego.getX() > entorno.ancho()) {
 	            bolaDeFuego = null;
 	        }
+	       
 	    }
 
 	    
@@ -536,69 +573,7 @@ public class Juego extends InterfaceJuego
 	    }
 	}
 
-	
-	/*
-	 * comprueba si el gnomo es null, de serlo, termina la comprobacion
-	 * 
-	 * De lo contrario recorre el arreglo de gnomos y pregunta si hay una colision con pep
-	 * de ser el caso reinicia la posicion del gnomo 
-	 * incrementando "gnomosSalvados", saliendo del bucle.
-	 * 
-	 * Tambien verifica si el gnomo colisiono con la navecita
-	 * de ser el caso tambien incrementa "gnomosSalvados"
-	 */
-	
-//	public void gnomosSalvados(Gnomos gn, Pep pep) {
-//		if(gn ==null) {
-//			return;
-//		}
-//		for(int i=0; i <gnomos.length; i++) {
-//			Gnomos g=gnomos[i];
-//			if(g!= null && pep.colisionGnomos(g) && pep.getY() > 350) {
-//				g.seReinicia(400, 83,10,20);
-//				gnomosSalvados++;
-//				break;
-//			}
-//			if(g!= null && g.colisionNavecita(navecita)) {
-//				g.seReinicia(400, 83,10,20);
-//				gnomosSalvados++;
-//				break;
-//			}
-//		}	
-//	}
-	
-	/*
-	 * Comprueba si el gnomo es null, de serlo, termina la comprobacion
-	 * 
-	 * De lo contrario recorre el arreglo de gnomos y el de tortugas 
-	 * pregunta si hay una colision, de ser el caso reinicia la posicion del gnomo 
-	 * incrementando "gnomosPerdidos", saliendo del bucle.
-	 * 
-	 * Tambien verifica si el gnomo salio de la pantalla
-	 * de ser el caso tambien incrementa "gnomosPerdidos"
-	 */
-	
-//	public void gnomosPerdidos(Gnomos gn, Tortugas t) {
-//		if(gn ==null) {
-//			return;
-//		}
-//		
-//		for(int i=0; i<gnomos.length; i++) {
-//			Gnomos g=gnomos[i];
-//			for(Tortugas tortugas: this.tortugas) {
-//				if(tortugas !=null && g.colisionTortugas(t)) {
-//					g.seReinicia(400, 83,10,20);
-//					gnomosPerdidos++;
-//					break;
-//				}
-//			}
-//			if(g.limiteSuperior() > 600) {
-//				g.seReinicia(400,83, 10, 20);
-//				gnomosPerdidos++;
-//			}
-//		}
-//	}
-	
+
 	/*
 	 * Muestra todas las estadisticas en pantalla
 	 * a su vez que otro valores para ver si las colisiones

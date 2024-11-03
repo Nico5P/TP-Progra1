@@ -25,8 +25,8 @@ public class Tortugas {
 	
 	public Tortugas() {
 		Random gen = new Random();
-		double xSpawn1 = gen.nextInt(350) + 1;
-		double xSpawn2 = gen.nextInt(800) + 470;
+		double xSpawn1 = gen.nextInt(250) + 1; //rango de apariciones desde 0 hasta 251 en x
+		double xSpawn2 = gen.nextInt(795) + 490; //rango de 490 a 794
 		int dondeSpawnea= gen.nextInt(2) + 1;
 		if(dondeSpawnea>1) {
 			this.x = xSpawn2;

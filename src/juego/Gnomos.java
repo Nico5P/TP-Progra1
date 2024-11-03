@@ -9,7 +9,7 @@ import entorno.Entorno;
 public class Gnomos {
 	double x, y;
 	double ancho, alto;
-	double velocidad =1;
+	double velocidad =0.5;
 	double ticks;
 	double posicionX;
 	double posicionY;
