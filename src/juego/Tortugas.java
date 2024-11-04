@@ -9,7 +9,7 @@ public class Tortugas {
 	Islas[] islas;
 	double x, y;
 	double ancho, alto;	
-	double velocidad=1;
+	double velocidad = 2;
 	double posicionX;
 	double posicionY;
 	boolean apoyado;
@@ -21,8 +21,6 @@ public class Tortugas {
 	boolean lado;
 	boolean movimientoDerecha;
 	
-	
-	
 	public Tortugas() {
 		Random gen = new Random();
 		double xSpawn1 = gen.nextInt(250) + 1; //rango de apariciones desde 0 hasta 251 en x
@@ -32,36 +30,35 @@ public class Tortugas {
 			this.x = xSpawn2;
 			this.derecha=true;
 		}
+		
 		else {
 			this.x = xSpawn1;
 			this.derecha=false;
 		}
-
-
+		
 		this.ancho=18;
 		this.alto=18;
-
 		this.apoyado=false;
 		this.caminar=true;
 	}
 	
 	public void dibujarse(Entorno entorno, boolean estaapoyado) {
 		if ( this.y < 600) {
-			entorno.dibujarRectangulo(x, y, ancho, ancho, alto, Color.white);
+			entorno.dibujarRectangulo(x, y, ancho, alto, 0, Color.white);
 		}
 	}
 	
 	public void caer() {
 		if(!this.apoyado) { 
-			this.y+=1;
+			this.y += 2;
 		}
 	}
 	
 	public void mover() {
         if (caminar) {
-        	this.x +=0.5; // Mover a la derecha
+        	this.x += 1; // Mover a la derecha
         } else {
-        	this.x -=0.5; // Mover a la izquierda
+        	this.x -= 1; // Mover a la izquierda
         }
 	}
 

@@ -46,12 +46,12 @@ public class Pep {
 	public void salto() { // Método para saltar
 		if (apoyado) { 
 			saltando = true;
-//			if(!debajoDe) {
+			if(!debajoDe) {
 				VelocidadY = 16;
-//			}
-//			else {
-//				VelocidadY = 9;
-//			}
+			}
+			else {
+				VelocidadY = 9;
+			}
 			apoyado = false; 
 		}
 	}

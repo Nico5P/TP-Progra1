@@ -1,15 +1,12 @@
 package juego;
 
 import java.awt.Color;
-import java.util.Random;
-import java.util.Timer;
-
 import entorno.Entorno;
 
 public class Gnomos {
 	double x, y;
 	double ancho, alto;
-	double velocidad =0.5;
+	double velocidad = 1.5;
 	double ticks;
 	double posicionX;
 	double posicionY;
@@ -34,7 +31,7 @@ public class Gnomos {
 
 	public void caida() {
 		if(!apoyado) {
-			this.y+=2;
+			this.y += 2;
 		}
 	}
 	
@@ -54,7 +51,6 @@ public class Gnomos {
         this.posicionY = this.y;
         salvado=false;
     }
-    
     
     public boolean colisionTortugas(Tortugas t) {
         return (this.limiteIzquierdo() < t.limiteDerecho() &&

@@ -42,6 +42,7 @@ public class BoladeFuego {
 		 if (disparada) 
 		 {
 			 entorno.dibujarRectangulo(x, y, ancho, alto, 0, Color.orange);
+//			 entorno.dibujarImagen(imagen, ancho, alto, 0, 0.3);
 			 
 		 }
 	 }
