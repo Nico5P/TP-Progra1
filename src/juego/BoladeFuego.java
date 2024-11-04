@@ -25,7 +25,7 @@ public class BoladeFuego {
 	        this.alto=16;
 	        this.ancho=16;
 	        this.disparada = true;
-	        this.imagen = Herramientas.cargarImagen("juego/imagenes/bolaDeFuego.webp");
+	        this.imagen = Herramientas.cargarImagen("juego/imagenes/bolaDeFuego.png");
 	 }
 	 
 	 public void disparo() {

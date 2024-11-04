@@ -18,6 +18,7 @@ public class Pep {
     public boolean tieneQueMoverse;
     public boolean moviendose;
     public boolean salto;
+    public boolean islaCercana;
 
 	public Pep(double x, double y) {
 		this.x = x; 
@@ -45,12 +46,12 @@ public class Pep {
 	public void salto() { // Método para saltar
 		if (apoyado) { 
 			saltando = true;
-			if(!debajoDe) {
+//			if(!debajoDe) {
 				VelocidadY = 16;
-			}
-			else {
-				VelocidadY = 9;
-			}
+//			}
+//			else {
+//				VelocidadY = 9;
+//			}
 			apoyado = false; 
 		}
 	}
@@ -73,8 +74,9 @@ public class Pep {
 	//Si Pep encuentra una isla cercana, en este método se genera un valor para que pueda comenzar a acercarse a la Isla
 	public void tieneQueAsomarse() { 
 		if(salto && !saltando) {
-			VelocidadX = 16;
+			VelocidadX = 8;
 			moviendose = true;
+			salto = false;
 //			tieneQueMoverse=false; //Ya no necesito este boolean, solo sirve para inicializar VelocidadX
 		}
 	}
@@ -83,7 +85,7 @@ public class Pep {
 	//codigo que lleva a cabo este movimiento
 	public void acercarse() 
 	{
-		if(moviendose && salto) 
+		if(moviendose) 
 		{
 			if(mirandoDerecha) 
 			{
@@ -93,11 +95,10 @@ public class Pep {
 			{
 				this.x -= VelocidadX; //Resta al valor de x si Pep esta mirando a la derecha
 			}
-			VelocidadX -= 0.5; //Resta gradualmente la distancia a la que Pep se debe acercar
+			VelocidadX -= 1; //Resta gradualmente la distancia a la que Pep se debe acercar
 			if (VelocidadX <= 0) 
 			{
 				moviendose=false;
-				salto=false;
 			}
 		}
 	}

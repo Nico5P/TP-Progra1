@@ -428,16 +428,16 @@ public class Juego extends InterfaceJuego
 	    
 	    boolean debajoDeUnaIsla = false;
 	    
-	    for (int numIsla = 0; numIsla < islas.length; numIsla++) {
-	    	if (pep.limiteSuperior() >= islas[numIsla].limiteInferior() &&
-		        pep.limiteIzquierdo() <= islas[numIsla].limiteDerecho() + pep.ancho + 3 &&
-		        pep.limiteDerecho() >= islas[numIsla].limiteIzquierdo() - pep.ancho - 3) {
-	    		conQueIslaChoca = numIsla; //Guardo el indice de la isla con la que pep colisiona
-	    		if(islas[enQueIslaEsta].limiteSuperior() <= islas[conQueIslaChoca].limiteInferior()-110 &&
-	    			islas[enQueIslaEsta].limiteSuperior() >= islas[conQueIslaChoca].limiteInferior()-90) {
+	    for (Islas isla : islas) {
+	    	if (pep.limiteSuperior() >= isla.limiteInferior() &&
+	    		pep.limiteInferior() <= isla.limiteInferior()+100 &&
+		        pep.limiteIzquierdo() <= isla.limiteDerecho() + pep.ancho + 3 &&
+		        pep.limiteDerecho() >= isla.limiteIzquierdo() - pep.ancho - 3) {
+//	    		if(islas[enQueIslaEsta].limiteSuperior() <= isla.limiteInferior()-110 &&
+//	    			islas[enQueIslaEsta].limiteSuperior() >= isla.limiteInferior()-90) {
 	    			debajoDeUnaIsla = true;
 	    			break;
-	    		}	
+//	    		}	
 	    	}
 	    }
 	    
@@ -465,6 +465,47 @@ public class Juego extends InterfaceJuego
 	    		}
 	    	}
 	    }
+	}
+	
+
+	/*
+	 * Verifica si pep puede moverse preguntando en que isla se encuentra para poder posicionarlo
+	 */
+	
+	private void verificarMovimientoPep() {
+	    if (pep.moviendose) {
+	        for (Islas isla : islas) {
+	            double limiteIzq = isla.limiteIzquierdo();
+	            double limiteDer = isla.limiteDerecho();
+	            double rangoCercaniaIzq = limiteIzq - 20;
+	            double rangoCercaniaDer = limiteDer + 20;
+	            
+	          //Comprueba si Pep tiene su limite inferior por encima del limite superior de la isla a la que va a saltar
+	            if (isla.limiteSuperior() >= islas[enQueIslaEsta].limiteSuperior() - 110 &&
+	            	isla.limiteSuperior() != islas[enQueIslaEsta].limiteSuperior()) {
+	                if (pep.centro() <= limiteIzq && pep.centro() >= rangoCercaniaIzq) {
+	                	pep.mirandoDerecha = true;
+	                	pep.islaCercana = true;
+	                    break;
+	                }
+
+	                if (pep.centro() >= limiteDer && pep.centro() <= rangoCercaniaDer) {
+	                    pep.mirandoDerecha = false;
+	                    pep.islaCercana = true;
+	                    break;
+	                }
+	                else {
+	                	pep.islaCercana = false;
+	                }
+	            }
+	        }
+	        
+	    }
+//	    if(pep.islaCercana && !pep.debajoDe) {
+	    	pep.tieneQueAsomarse();
+	        pep.acercarse();
+//	    }
+	    
 	}
 
 	
@@ -502,11 +543,13 @@ public class Juego extends InterfaceJuego
 
 	    if (entorno.sePresiono(entorno.TECLA_ARRIBA) && puedeMoverse) {
 	        pep.salto();
-	        verificarMovimientoPep();
+//	        pep.caer();
+//	        verificarMovimientoPep();
 	    }
 
 	    if (!pep.apoyado || pep.chocaCon) {
 	        pep.caer();
+	        verificarMovimientoPep();
 	    }
 	}
     
@@ -525,40 +568,6 @@ public class Juego extends InterfaceJuego
 	    }
 
 	    
-	}
-    
-
-	/*
-	 * Verifica si pep puede moverse preguntando en que isla se encuentra para poder posicionarlo
-	 */
-	
-	private void verificarMovimientoPep() {
-	    if (pep.tieneQueMoverse) {
-	        for (Islas isla : islas) {
-	            double limiteIzq = isla.limiteIzquierdo();
-	            double limiteDer = isla.limiteDerecho();
-	            double rangoCercaniaIzq = limiteIzq - 30;
-	            double rangoCercaniaDer = limiteDer + 30;
-	            
-	          //Comprueba si Pep tiene su limite inferior por encima del limite superior de la isla a la que va a saltar
-	            if (pep.limiteInferior() >= islas[enQueIslaEsta].limiteSuperior() - 110) {
-	                if (pep.centro() <= limiteIzq && pep.centro() >= rangoCercaniaIzq) {
-	                	pep.mirandoDerecha = true;
-	                    break;
-	                }
-
-	                if (pep.centro() >= limiteDer && pep.centro() <= rangoCercaniaDer) {
-	                    pep.y = isla.limiteSuperior() - 110 - pep.alto;
-	                    pep.x = limiteDer - pep.ancho;
-	                    pep.mirandoDerecha = false;
-	                    break;
-	                }
-	            }
-	        }
-	        
-	    }
-	    pep.tieneQueAsomarse();
-        pep.acercarse();
 	}
 
 	/*
