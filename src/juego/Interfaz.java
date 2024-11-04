@@ -1,6 +1,7 @@
 package juego;
 
 import entorno.Entorno;
+import java.awt.Color;
 
 public class Interfaz {
     private boolean pausado;
@@ -32,7 +33,7 @@ public class Interfaz {
     public void dibujarMenu(Entorno entorno) {
         int ancho = entorno.ancho();
         int alto = entorno.alto();
-        entorno.cambiarFont("Arial", 30, java.awt.Color.WHITE);
+        entorno.cambiarFont("Arial", 30, Color.WHITE);
         
         /*
          * Dibuja "Pausa" en el menu de pausa
@@ -45,16 +46,16 @@ public class Interfaz {
          * para que el usuario sepa cual esta por escoger
          */
         if (seleccion == 0) {
-            entorno.cambiarFont("Arial", 30, java.awt.Color.YELLOW);
+            entorno.cambiarFont("Arial", 30, Color.YELLOW);
         } else {
-            entorno.cambiarFont("Arial", 30, java.awt.Color.WHITE);
+            entorno.cambiarFont("Arial", 30, Color.WHITE);
         }
         entorno.escribirTexto("Continuar", ancho / 2 - 50, alto / 2);
         
         if (seleccion == 1) {
-            entorno.cambiarFont("Arial", 30, java.awt.Color.YELLOW);
+            entorno.cambiarFont("Arial", 30, Color.YELLOW);
         } else {
-            entorno.cambiarFont("Arial", 30, java.awt.Color.WHITE);
+            entorno.cambiarFont("Arial", 30, Color.WHITE);
         }
         entorno.escribirTexto("Reiniciar", ancho / 2 - 50, alto / 2 + 50);
     }
