@@ -40,14 +40,14 @@ public class Juego extends InterfaceJuego
 	int segundos;
 	int tiempoJugando;
 	int tiempoActual = tiempoJugando;
+	int tEnPantalla;
+	int enQueIslaEsta;
+	int conQueIslaChoca;
     boolean Jugando;
     boolean cooldownGnomos;
     boolean gnomoGenerado;
     boolean tortugaGenerada;
     boolean cooldownTortugas;
-    int tEnPantalla;
-    int enQueIslaEsta;
-    int conQueIslaChoca;
     boolean disparo;
     
     
@@ -58,13 +58,10 @@ public class Juego extends InterfaceJuego
     	 * Inicializacion de todas las variables para que el juego funcione
     	 */
     	
+        this.entorno = new Entorno(this, "Proyecto para TP; Balbi, Gomez, Pereira, Pereyra", 800, 600);
+        entorno.colorFondo(Color.pink);
         iniciarJuego();
-        iniciarInterfaz();
-        generarTortugas();
-        generarGnomos();
-        generarIslas();
-        crearPep();
-        generarNavecita();
+        this.entorno.iniciar();
 //        if(disparo) {
 //        	generarBolaDeFuego();
 //        }
@@ -73,20 +70,25 @@ public class Juego extends InterfaceJuego
          * Inicia el juego cargando los valores iniciales
          */
         
-        this.entorno.iniciar();
-        this.Jugando = true; 
-    	this.vidas = 3;
-    	this.tiempoJugando = 0;
-    	this.gnomosSalvados = 0;
-    	this.gnomosPerdidos=0;
-    	this.tortugasEliminadas = 0;
 
     }
 
     private void iniciarJuego() {
-        this.entorno = new Entorno(this, "Proyecto para TP; Balbi, Gomez, Pereira, Pereyra", 800, 600);
-        entorno.colorFondo(Color.pink);
-        fondo = Herramientas.cargarImagen("juego/imagenes/fondo.jpg");
+    	fondo = Herramientas.cargarImagen("juego/imagenes/fondo.jpg");
+    	iniciarInterfaz();
+    	generarTortugas();
+    	generarGnomos();
+    	generarIslas();
+    	crearPep();
+    	generarNavecita();
+    	
+    	this.Jugando = true; 
+    	this.vidas = 3;
+    	this.tiempoJugando = 0;
+    	this.gnomosSalvados = 0;
+    	this.gnomosPerdidos = 0;
+    	this.tortugasEliminadas = 0;
+        
     }
 
     private void iniciarInterfaz() {
@@ -111,11 +113,10 @@ public class Juego extends InterfaceJuego
         gnomos = new Gnomos[6];
         cooldownGnomos=false;
         actualizarTiempo();
-        for (@SuppressWarnings("unused") Gnomos g : gnomos){
+        for (@SuppressWarnings("unused") Gnomos g : gnomos) {
         	if(gnomosEnPantalla!=4 && cooldownGnomos && !gnomoGenerado) {
         		g = new Gnomos(400, 83, 10, 20);
                 gnomosEnPantalla++;
-                 
         	}
         	gnomoGenerado=true; 
         	break;
@@ -217,18 +218,21 @@ public class Juego extends InterfaceJuego
 		if(segundos%5 == 0 && !gnomoGenerado) { //Calculo el tiempo de esepra para que pueda generarse otro gnomo
 			cooldownGnomos=true;
 		}
+		
 		else if(segundos%15 == 0 && gnomoGenerado) { //Condicion para cambiar el estado de gnomoGenerado a false
 			cooldownGnomos=false;
 			gnomoGenerado=false;
 		} 
+		
 		else {
 			cooldownGnomos=false;
 		}
 		
-		if(segundos%5 == 0 && !tortugaGenerada) //Calculo el tiempo de esepra para que pueda generarse otro gnomo
+		if (segundos%5 == 0 && !tortugaGenerada) //Calculo el tiempo de esepra para que pueda generarse otro gnomo
 		{
 			cooldownTortugas=true;
 		}
+		
 		else if(segundos%15 == 0 && tortugaGenerada) { //Condicion para cambiar el estado de gnomoGenerado a false
 			cooldownTortugas=false;
 			tortugaGenerada=false;
@@ -239,8 +243,8 @@ public class Juego extends InterfaceJuego
 	}
 
 	private void comprobarGameOver() {
-	    if (vidas < 0) {
-	        reiniciar();
+	    if (vidas < 0 || entorno.estaPresionada('a')) {
+	        iniciarJuego();
 	    }
 	}
 
@@ -604,10 +608,6 @@ public class Juego extends InterfaceJuego
 	 * Reinicia todas las variables a su estado inicial
 	 * (en proceso) reinicia el juego
 	 */
-    private void reiniciar() 
-    {
-    	
-    }
 	
 	@SuppressWarnings("unused")
 	public static void main(String[] args)
