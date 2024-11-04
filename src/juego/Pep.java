@@ -63,7 +63,9 @@ public class Pep {
 			VelocidadY -= 1; //
 			if (VelocidadY <= 0) { // Cambia el estado al llegar al "limite" de alto permitido en su salto 
 				saltando = false;
-				salto = true;
+				if(!debajoDe) {
+					salto = true;
+				}
 			}
 		} 
 		

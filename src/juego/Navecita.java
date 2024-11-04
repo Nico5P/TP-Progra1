@@ -19,10 +19,10 @@ public class Navecita {
 	}
 	
 	public void moverseHacia(double x) {
-		if(x > this.centro()) {
+		if(x > this.centro() && x <= 800) {
 			this.x+=5;
 		}
-		if (x < this.centro()) {
+		if ((x < this.centro() && x > this.ancho) || (x < this.limiteIzquierdo() && x > 10)) {
 			this.x-=5;
 		}
 		else {

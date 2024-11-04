@@ -167,7 +167,7 @@ public class Juego extends InterfaceJuego
     }
     
     private void generarNavecita() {
-        navecita = new Navecita(370, 560);
+        navecita = new Navecita(400, 560);
     }
 
 	/*
@@ -419,20 +419,27 @@ public class Juego extends InterfaceJuego
 	    
 	    boolean debajoDeUnaIsla = false;
 	    
-	    for (Islas isla : islas) {
-	    	if (isla.limiteInferior() <= islas[enQueIslaEsta].limiteSuperior()-190 &&
-		        pep.limiteIzquierdo() <= isla.limiteDerecho() + pep.ancho + 3 &&
-		        pep.limiteDerecho() >= isla.limiteIzquierdo() - pep.ancho - 3) {
-	    			debajoDeUnaIsla = false;
-	    			break;
-	    	}
-	    	if(isla.limiteInferior() >= islas[enQueIslaEsta].limiteSuperior()-100 &&
-			        pep.limiteIzquierdo() <= isla.limiteDerecho() + pep.ancho + 3 &&
-			        pep.limiteDerecho() >= isla.limiteIzquierdo() - pep.ancho - 3) {
-		    			debajoDeUnaIsla = true;
-		    			break;
-	    		
-	    	}
+//	    for (Islas isla : islas) {
+//	    	if (isla.limiteInferior() <= islas[enQueIslaEsta].limiteSuperior()-170 &&
+//		        pep.limiteIzquierdo() <= isla.limiteDerecho() + pep.ancho + 3 &&
+//		        pep.limiteDerecho() >= isla.limiteIzquierdo() - pep.ancho - 3) {
+//	    			debajoDeUnaIsla = false;
+//	    			break;
+//	    	}
+//	    	if(isla.limiteInferior() >= islas[enQueIslaEsta].limiteSuperior()-100 &&
+//			   pep.limiteIzquierdo() <= isla.limiteDerecho() + pep.ancho + 3 &&
+//			   pep.limiteDerecho() >= isla.limiteIzquierdo() - pep.ancho - 3) {
+//		    		debajoDeUnaIsla = true;
+//		    		break;
+//	    	}
+//	    }
+	    
+	    if(pep.limiteIzquierdo() >= islas[enQueIslaEsta].limiteIzquierdo() - pep.ancho && pep.limiteDerecho() <= islas[enQueIslaEsta].limiteIzquierdo() + pep.ancho + 8) {
+	    	debajoDeUnaIsla = true;
+	    }
+	    
+	    if(pep.limiteDerecho() <= islas[enQueIslaEsta].limiteDerecho() + pep.ancho && pep.limiteIzquierdo() >= islas[enQueIslaEsta].limiteDerecho() - pep.ancho - 8) {
+	    	debajoDeUnaIsla = true;
 	    }
 	    
 	    pep.debajoDe = debajoDeUnaIsla;
@@ -471,8 +478,8 @@ public class Juego extends InterfaceJuego
 	        for (Islas isla : islas) {
 	            double limiteIzq = isla.limiteIzquierdo();
 	            double limiteDer = isla.limiteDerecho();
-	            double rangoCercaniaIzq = limiteIzq - 20;
-	            double rangoCercaniaDer = limiteDer + 20;
+	            double rangoCercaniaIzq = limiteIzq - 30;
+	            double rangoCercaniaDer = limiteDer + 30;
 	            
 	          //Comprueba si Pep tiene su limite inferior por encima del limite superior de la isla a la que va a saltar
 	            if (isla.limiteSuperior() >= islas[enQueIslaEsta].limiteSuperior() - 110 &&
