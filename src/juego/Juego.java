@@ -400,9 +400,11 @@ public class Juego extends InterfaceJuego
 
 		if(t.caminar && t.limiteIzquierdo() >= isla.limiteDerecho() - (t.ancho /2)) {
 			t.caminar = false;
+			t.mirandoDerecha = false;
 		}
 		if(!t.caminar && t.limiteDerecho() <= isla.limiteIzquierdo() + (t.ancho /2)) {
 			t.caminar = true;
+			t.mirandoDerecha = true;
 		}
 	}
 	
@@ -557,7 +559,8 @@ public class Juego extends InterfaceJuego
 	 */
     private void funcionamientoBolaDeFuego() {
     	if (bolaDeFuego != null) {
-	        bolaDeFuego.dibujarse(entorno);
+//	        bolaDeFuego.dibujarse(entorno);
+	        bolaDeFuego.dibujarBolaDeFuego(entorno);
 	    }
 	    if (bolaDeFuego != null && bolaDeFuego.disparada) {
 	        bolaDeFuego.disparo();

@@ -101,13 +101,13 @@ public class Pep {
 		}
 	}
 	
-	//Una vez que tenemos la variable VelocidadX para que pep se acerque gradualmente a la isla, ejecutamos el
-	//codigo que lleva a cabo este movimiento
-	
 	public void dibujarse(Entorno entorno) {
 		entorno.dibujarRectangulo(this.x, this.y, this.ancho, this.alto, 0, Color.red);
 	}
 	
+	/*
+	 * Los siguientes tres métodos sirven para comprobar si Pep colisiona con Gnomos, Tortugas o Islas.
+	 */	
 	public boolean colisionGnomos(Gnomos g) {
 	    return (this.limiteIzquierdo() < g.limiteDerecho() &&
 	            this.limiteDerecho() > g.limiteIzquierdo() &&
@@ -133,6 +133,8 @@ public class Pep {
 		return this.mirandoDerecha;
 	}
 
+	//Limites y valores de la hitbox
+	
 	public double getX() {
 		return this.x;
 	}

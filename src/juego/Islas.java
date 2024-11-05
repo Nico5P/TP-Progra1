@@ -22,13 +22,14 @@ public class Islas {
     }
 
     public void generarIslas(Entorno e) {
-        e.dibujarRectangulo(this.x, this.y, this.ancho, this.alto, 0, Color.blue);
-        
+        e.dibujarRectangulo(this.x, this.y, this.ancho, this.alto, 0, Color.blue);   
     }
     
     public void dibujarIslas(Entorno e) {
     	e.dibujarImagen(this.imagen, this.x, this.y-3, 0, 0.47);
     }
+    
+  //Limites y valores de la hitbox
     
     public double limiteSuperior() {
         return this.y - this.alto / 2;

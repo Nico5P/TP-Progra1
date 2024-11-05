@@ -25,7 +25,13 @@ public class BoladeFuego {
 	        this.alto=16;
 	        this.ancho=16;
 	        this.disparada = true;
-	        this.imagen = Herramientas.cargarImagen("juego/imagenes/bolaDeFuego.png");
+	        if (this.direccion) {
+	        	this.imagen = Herramientas.cargarImagen("juego/imagenes/bolaDeFuegoDerecha.png");
+	        }
+	        else {
+	        	this.imagen = Herramientas.cargarImagen("juego/imagenes/bolaDeFuegoIzquierda.png");
+	        }
+	        
 	 }
 	 
 	 public void disparo() {
@@ -37,14 +43,14 @@ public class BoladeFuego {
 	 }
 
 
-	 public void dibujarse(Entorno entorno) 
-	 {
-		 if (disparada) 
-		 {
+	 public void dibujarse(Entorno entorno) {
+		 if (disparada) {
 			 entorno.dibujarRectangulo(x, y, ancho, alto, 0, Color.orange);
-//			 entorno.dibujarImagen(imagen, ancho, alto, 0, 0.3);
-			 
 		 }
+	 }
+	 
+	 public void dibujarBolaDeFuego(Entorno entorno) {
+		 entorno.dibujarImagen(imagen, x, y, 0, 0.3);
 	 }
 	 
 	 public boolean colisionTortugas(Tortugas t) {
@@ -54,16 +60,16 @@ public class BoladeFuego {
 				 this.limiteInferior() > t.limiteSuperior());
 	 }
 	 
-	 public double getX() 
-		{
-			return this.x;
-		}
-
-	 public double getY() 
-	 {
-		 return this.y;
+	//Limites y valores de la hitbox
 	 
+	 public double getX() {
+			return this.x;
 	 }
+	 
+	 public double getY() {
+		 return this.y;
+	 }
+	 
 	 public double limiteSuperior() {
 		 return this.y - this.alto / 2;
 	 }
@@ -79,8 +85,8 @@ public class BoladeFuego {
 	 public double limiteDerecho() {
 		 return this.x + this.ancho / 2;
 	 }
-	 public double centro() 
-	 {	
+	 
+	 public double centro() {	
 		 return this.x + (this.ancho / 2);
 	 }
 }
