@@ -73,20 +73,16 @@ public class Pep {
 			this.y += 2; // sino esta apoyado aumenta "Y" para simular la "caida"
 		}
 	}
-	//Si Pep encuentra una isla cercana, en este método se genera un valor para que pueda comenzar a acercarse a la Isla
+	
+	/*
+	 *Una vez que Pep terminó de saltar y de disminuir su valor de Y, si Pep 
+	 */
 	public void tieneQueAsomarse() { 
-		if(salto && !saltando) {
+		if(salto && !saltando && !debajoDe) {
 			VelocidadX = 8;
 			moviendose = true;
 			salto = false;
-//			tieneQueMoverse=false; //Ya no necesito este boolean, solo sirve para inicializar VelocidadX
 		}
-	}
-	
-	//Una vez que tenemos la variable VelocidadX para que pep se acerque gradualmente a la isla, ejecutamos el
-	//codigo que lleva a cabo este movimiento
-	public void acercarse() 
-	{
 		if(moviendose) 
 		{
 			if(mirandoDerecha) 
@@ -104,6 +100,10 @@ public class Pep {
 			}
 		}
 	}
+	
+	//Una vez que tenemos la variable VelocidadX para que pep se acerque gradualmente a la isla, ejecutamos el
+	//codigo que lleva a cabo este movimiento
+	
 	public void dibujarse(Entorno entorno) {
 		entorno.dibujarRectangulo(this.x, this.y, this.ancho, this.alto, 0, Color.red);
 	}
