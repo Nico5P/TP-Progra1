@@ -495,17 +495,12 @@ public class Juego extends InterfaceJuego
 	            if (isla.limiteSuperior() >= islas[enQueIslaEsta].limiteSuperior() - 110 &&
 	            	isla.limiteSuperior() != islas[enQueIslaEsta].limiteSuperior()) {
 	                if (pep.centro() <= limiteIzq && pep.centro() >= rangoCercaniaIzq) { //Intervalo de cercanía con límite izquierdo
-	                	pep.mirandoDerecha = true; 
-	                	pep.islaCercana = true; 
+	                	pep.mirandoDerecha = true;
 	                    break;
 	                }
 	                if (pep.centro() >= limiteDer && pep.centro() <= rangoCercaniaDer) { //Intervalo de cercanía con límite derecho
 	                    pep.mirandoDerecha = false;
-	                    pep.islaCercana = true;
 	                    break;
-	                }
-	                else {
-	                	pep.islaCercana = false; //Pep no se encuentra en ningún intervalo de cercanía
 	                }
 	            }
 	        }
@@ -559,7 +554,6 @@ public class Juego extends InterfaceJuego
 	 */
     private void funcionamientoBolaDeFuego() {
     	if (bolaDeFuego != null) {
-//	        bolaDeFuego.dibujarse(entorno);
 	        bolaDeFuego.dibujarBolaDeFuego(entorno);
 	    }
 	    if (bolaDeFuego != null && bolaDeFuego.disparada) {

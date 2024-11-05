@@ -13,15 +13,10 @@ public class Tortugas {
 	double x, y;
 	double ancho, alto;	
 	double velocidad = 2;
-	double posicionX;
-	double posicionY;
 	boolean apoyado;
-	boolean enUnaIsla;
 	boolean derecha;
-	boolean salvado;
 	boolean caminar;
 	boolean mira;
-	boolean lado;
 	boolean mirandoDerecha;
 	Image imagen;
 	

@@ -10,7 +10,6 @@ public class Navecita {
 	public double ancho;
 	public double alto;
 	public boolean mirandoDerecha;
-	public boolean quieto;
 	Image imagen;
 	
 	public Navecita(double x, double y) {
