@@ -19,6 +19,7 @@ public class Juego extends InterfaceJuego
 	Gnomos[] gnomos;
 	Navecita navecita;
 	BoladeFuego bolaDeFuego;
+	Audio audio;
 	
 	// Variables y métodos propios de cada grupo
 	Image fondo;
@@ -42,6 +43,7 @@ public class Juego extends InterfaceJuego
 	int minutos;
 	int segundos;
 	int tiempoJugando;
+	int minsJugando;
 	int tEnPantalla;
 	int enQueIslaEsta;
 	int conQueIslaChoca;
@@ -67,6 +69,7 @@ public class Juego extends InterfaceJuego
     }
 
     private void iniciarJuego() {
+    	audio = new Audio();
     	cargarRecursos(); //Carga todos los recursos (imagenes, sonidos)
     	generarTortugas(); //Logica que genera a las tortugas
     	generarGnomos(); //Logica que genera a los gnomos
@@ -97,6 +100,7 @@ public class Juego extends InterfaceJuego
         this.horas = 0;
         this.minutos = 0;
         this.segundos = 0;
+        this.minsJugando = 0;
         this.tiempoJugando = 0;
     }
     
@@ -106,6 +110,7 @@ public class Juego extends InterfaceJuego
     	titleScreen = Herramientas.cargarImagen("juego/imagenes/titleScreen.png");
     	winScreen = Herramientas.cargarImagen("juego/imagenes/winScreen.png");
     	gameOverScreen = Herramientas.cargarImagen("juego/imagenes/gameOverScreen.png");
+    	audio.cargarSonido("src/juego/sonidos/pepGnomo.wav");
     }
 
     private void iniciarInterfaz() {
@@ -207,7 +212,8 @@ public class Juego extends InterfaceJuego
             }
             return;            	
         }
-
+        
+        
         if (inicio) {
             dibujarInicio();
         } else if (gameOver) {
@@ -220,17 +226,23 @@ public class Juego extends InterfaceJuego
         }
     }
     private void actualizarEstadoDelJuego() {
-    	if (Jugando) {
+    	if (!inicio || !gameOver || !victoria) {
+    		
+    		tiempoJugando++;
+    		if ((tiempoJugando/60) == 60){
+    			tiempoJugando = 0;
+    			minsJugando++;
+    		}
     		actualizarTiempo();
+    		estadisticas();
+    		funcionamientoGnomos();
+    		generarIslas();
+    		funcionamientoDePep();
+    		controlarMovimientoPep();
+    		funcionamientoBolaDeFuego();
+    		funcionamientoTortugas();
+    		funcionamientoNave();
     	}
-        estadisticas();
-        funcionamientoGnomos();
-        generarIslas();
-        funcionamientoDePep();
-        controlarMovimientoPep();
-        funcionamientoBolaDeFuego();
-        funcionamientoTortugas();
-        funcionamientoNave();
     }
 
     
@@ -274,25 +286,30 @@ public class Juego extends InterfaceJuego
 	            
 	            if (pep.colisionGnomos(g)&& pep.getY() > 350) {
 	                gnomos[i] = null;
+	                audio.play("src/juego/sonidos/pepGnomo.wav");
 	                gnomosSalvados++;
 	            }
 	            
 	            if(g!= null && g.colisionNavecita(navecita)) {
 //					g.seReinicia(400, 83,10,20);
 					gnomos[i] = null;
+					audio.play("src/juego/sonidos/pepGnomo.wav");
 					gnomosSalvados++;
 					
 				}
 	            
 	            for (Tortugas t : tortugas) {
+	            	
 	                if (t != null && g.colisionTortugas(t)) {
 	                	gnomos[i] = null; 
+	                	audio.play("src/juego/sonidos/pepGnomo.wav");
 	                    gnomosPerdidos++;
 	                }
 	            }
 	            
 	            if (g.limiteSuperior() > entorno.alto()) {
 	            	gnomos[i] = null; 
+	            	audio.play("src/juego/sonidos/pepGnomo.wav");
 	                gnomosPerdidos++;
 	            }
 	        }
@@ -329,9 +346,6 @@ public class Juego extends InterfaceJuego
 
 	}
 	
-	/*
-	 * El metodo se encarga de dibujar a pep
-	 */
 	
 	private void funcionamientoTortugas() {
 		Random random1 = new Random();
@@ -466,6 +480,7 @@ public class Juego extends InterfaceJuego
 	        pep.y = 480;
 	        pep.apoyado = true;
 	        vidas--;
+			audio.play("src/juego/sonidos/pepGnomo.wav");
 	    }
 	    
 	    for(int i=0; i< tortugas.length; i++) {
@@ -480,11 +495,11 @@ public class Juego extends InterfaceJuego
 	    	}
 	    }
 	    
-        if (vidas < 0) {
+        if (vidas < 0 || gnomosPerdidos == 6) {
             gameOver = true;
         }
         
-        if (gnomosSalvados >= 10) {
+        if (gnomosSalvados >= 8 && tortugasEliminadas == 5) {
             victoria = true;
         }
 	}
@@ -614,12 +629,8 @@ public class Juego extends InterfaceJuego
 	    entorno.escribirTexto("Gnomos Perdidos: " + gnomosPerdidos, 10, 60);
 	    entorno.escribirTexto("Gnomos en Pantalla: " + gnomosEnPantalla, 10, 80);
 	    entorno.escribirTexto("Tortugas Asesinadas: " + tortugasEliminadas, 10, 100);
-	    entorno.escribirTexto("tiem" + segundos, 10, 120);
-
-	    String tiempo = String.format("%02d:%02d", minutos, segundos);
+	    String tiempo = String.format("%02d:%02d", minsJugando , tiempoJugando/60);
 	    entorno.escribirTexto("Tiempo: " + tiempo, 10, 120);
-	    
-	    
 	    entorno.escribirTexto("Pep Y Inf: " + pep.limiteInferior(), 10, 140);
 	    entorno.escribirTexto("Pep X Izq: " + pep.limiteIzquierdo(), 10, 160);
 	    entorno.escribirTexto("Pep X Der: " + pep.limiteDerecho(), 10, 180);

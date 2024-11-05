@@ -49,7 +49,7 @@ public class Interfaz {
         } else {
             entorno.cambiarFont("Arial", 30, Color.WHITE);
         }
-        entorno.escribirTexto("Reiniciar", ancho / 2 - 50, alto / 2 + 50);
+        entorno.escribirTexto("Salir", ancho / 2 - 50, alto / 2 + 50);
     }
     
     public boolean pausado() {

@@ -25,9 +25,6 @@ public class Navecita {
 		if ((x < this.centro() && x > this.ancho) || (x < this.limiteIzquierdo() && x > 10)) {
 			this.x-=5;
 		}
-		else {
-			this.x = this.x;
-		}
 	}
 	
 	public void dibujarse(Entorno entorno) {
