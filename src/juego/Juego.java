@@ -22,6 +22,9 @@ public class Juego extends InterfaceJuego
 	
 	// Variables y métodos propios de cada grupo
 	Image fondo;
+	Image titleScreen;
+	Image winScreen;
+	Image gameOverScreen;
 	Image casa;
 	int islasPorFila;
 	int anchoIsla;
@@ -39,10 +42,12 @@ public class Juego extends InterfaceJuego
 	int minutos;
 	int segundos;
 	int tiempoJugando;
-	int tiempoActual = tiempoJugando;
 	int tEnPantalla;
 	int enQueIslaEsta;
 	int conQueIslaChoca;
+	boolean inicio;
+	boolean victoria;
+	boolean gameOver;
     boolean Jugando;
     boolean cooldownGnomos;
     boolean gnomoGenerado;
@@ -57,44 +62,59 @@ public class Juego extends InterfaceJuego
     	 */
     	
         this.entorno = new Entorno(this, "Proyecto para TP; Balbi, Gomez, Pereira, Pereyra", 800, 600);
-        entorno.colorFondo(Color.pink);
         iniciarJuego();
         this.entorno.iniciar();
-//        if(disparo) {
-//        	generarBolaDeFuego();
-//        }
-
-        /*
-         * Inicia el juego cargando los valores iniciales
-         */
     }
 
     private void iniciarJuego() {
-    	fondo = Herramientas.cargarImagen("juego/imagenes/fondo.jpg");
-    	iniciarInterfaz();
-    	generarTortugas();
-    	generarGnomos();
-    	generarIslas();
-    	crearPep();
-    	generarNavecita();
+    	cargarRecursos(); //Carga todos los recursos (imagenes, sonidos)
+    	generarTortugas(); //Logica que genera a las tortugas
+    	generarGnomos(); //Logica que genera a los gnomos
+    	generarIslas(); //Logica que genera las islas
+    	generarPep(); //Logica que genera a Pep
+    	generarNave();
+        iniciarVariables();
+    }
+    
+    private void iniciarVariables() {
     	
-    	this.Jugando = true; 
-    	this.vidas = 3;
-    	this.tiempoJugando = 0;
-    	this.gnomosSalvados = 0;
-    	this.gnomosPerdidos = 0;
-    	this.tortugasEliminadas = 0;
+        this.Jugando = true;
+        this.inicio = true;
+        this.victoria = false;
+        this.gameOver = false;
+        this.cooldownGnomos = false;
+        this.gnomoGenerado = false;
+        this.tortugaGenerada = false;
+        this.cooldownTortugas = false;
+        this.disparo = false;
         
+        this.vidas = 3;
+        this.gnomosSalvados = 0;
+        this.gnomosPerdidos = 0;
+        this.tortugasEliminadas = 0;
+        this.gnomosEnPantalla = 0;
+        
+        this.horas = 0;
+        this.minutos = 0;
+        this.segundos = 0;
+        this.tiempoJugando = 0;
+    }
+    
+    private void cargarRecursos() {
+    	iniciarInterfaz();
+    	fondo = Herramientas.cargarImagen("juego/imagenes/fondo.png");
+    	titleScreen = Herramientas.cargarImagen("juego/imagenes/titleScreen.png");
+    	winScreen = Herramientas.cargarImagen("juego/imagenes/winScreen.png");
+    	gameOverScreen = Herramientas.cargarImagen("juego/imagenes/gameOverScreen.png");
     }
 
     private void iniciarInterfaz() {
         this.Interfaz = new Interfaz();
     }
-
+   
     private void generarTortugas() {
     	tEnPantalla = 0;
         this.tortugas = new Tortugas[5];
-        cooldownTortugas = false;
         for (int i = 0; i < this.tortugas.length; i++) {
         	if(tEnPantalla !=4 && cooldownTortugas && !tortugaGenerada) {
         		this.tortugas[i] = new Tortugas();
@@ -105,19 +125,19 @@ public class Juego extends InterfaceJuego
     }
     
     private void generarGnomos() {
-    	gnomosEnPantalla = 0;
+        gnomosEnPantalla = 0;
         gnomos = new Gnomos[6];
-        cooldownGnomos = false;
         actualizarTiempo();
-        for (@SuppressWarnings("unused") Gnomos g : gnomos) {
-        	if(gnomosEnPantalla != 4 && cooldownGnomos && !gnomoGenerado) {
-        		g = new Gnomos(400, 83, 10, 20);
-                gnomosEnPantalla++;
-        	}
-        	gnomoGenerado = true; 
-        	break;
+
+        for (int i = 0; i < gnomos.length; i++) {
+            if (gnomos[i] == null && gnomos.length < 6 && cooldownGnomos) {
+                gnomos[i] = new Gnomos(400, 83, 10, 20);
+                gnomosEnPantalla++;  
+                gnomoGenerado = true; // Marca que se ha generado un gnomo
+            }
         }
     }
+    
     
     private void generarIslas() {
         int islasPorFila = 5;
@@ -148,21 +168,11 @@ public class Juego extends InterfaceJuego
         }
     }
 
-
-    private void crearPep() {
-        if (this.islas.length > 0) {
-            int primerIslaInferiorIndex = (islasPorFila * (islasPorFila - 1)) / 2;
-            int islaAleatoriaIndex = primerIslaInferiorIndex + (int)(Math.random() * islasPorFila); // Selección aleatoria
-            Islas islaSeleccionada = this.islas[islaAleatoriaIndex];
-            pep = crearPep(islaSeleccionada.x, 480);
-        }
-    }
-
-    public Pep crearPep(double x, double y) {
-    	return new Pep(x, y);
+    private void generarPep() {
+    	pep = new Pep(400, 480);
     }
     
-    private void generarNavecita() {
+    private void generarNave() {
         navecita = new Navecita(400, 560);
     }
 
@@ -175,72 +185,79 @@ public class Juego extends InterfaceJuego
 	
     public void tick() {
         if (entorno.sePresiono(entorno.TECLA_ESCAPE)) {
-            Interfaz.noPausado(); // Alterna entre pausado y no pausado
-            
-        }
-        if (Interfaz.pausado()) {
-            Interfaz.dibujarMenu(entorno); // Dibuja el menú de pausa
-            tiempoJugando = tiempoActual; //Si se pausa el juego lo detiene y muestra el ultimo valor
-            return; // No actualiza el juego si está pausado
-        }
-        if (Jugando) {
-        	entorno.dibujarImagen(fondo, 400, 300, 0, 0.3); // Fondo del juego
-            tiempoJugando++; //Aumenta el contador de tiempo en pantalla
+            Interfaz.noPausado();
         }
         
-        actualizarTiempo();
+        if (Interfaz.pausado()) {
+            Interfaz.dibujarMenu(entorno);
+            if (entorno.sePresiono(entorno.TECLA_ARRIBA)) {
+                Interfaz.cambiarOpcion(-1);
+            }
+
+            if (entorno.sePresiono(entorno.TECLA_ABAJO)) {
+                Interfaz.cambiarOpcion(1);
+            }
+            if (entorno.sePresiono(entorno.TECLA_ENTER)) {
+            	if (Interfaz.opcionElegida() == 0) {
+            		Interfaz.noPausado();
+            	}
+            	else if (Interfaz.opcionElegida() == 1) {
+            		iniciarJuego();
+            	}
+            }
+            return;            	
+        }
+
+        if (inicio) {
+            dibujarInicio();
+        } else if (gameOver) {
+            dibujarGameOver();
+        } else if (victoria) {
+            dibujarVictoria();
+        } else {
+            entorno.dibujarImagen(fondo, 400, 300, 0, 1);
+            actualizarEstadoDelJuego();
+        }
+    }
+    private void actualizarEstadoDelJuego() {
+    	if (Jugando) {
+    		actualizarTiempo();
+    	}
         estadisticas();
-        comprobarGameOver();
         funcionamientoGnomos();
         generarIslas();
         funcionamientoDePep();
         controlarMovimientoPep();
-        dibujarNave();
         funcionamientoBolaDeFuego();
         funcionamientoTortugas();
+        funcionamientoNave();
     }
 
+    
+    private void actualizarTiempo() {
+	        segundos = (entorno.tiempo() / 1000)% 60;
+	        minutos = (segundos / 60) % 60;
+	        horas = minutos / 3600;
 
-	private void actualizarTiempo() {
-	    int sec = entorno.tiempo() / 1000;
-	    segundos = sec%60;
-		int min = sec/60;
-		minutos = min%60;
-		int hor = min/60;
-		horas = hor%60;
-		
-		if(segundos%5 == 0 && !gnomoGenerado) { //Calculo el tiempo de esepra para que pueda generarse otro gnomo
-			cooldownGnomos = true;
+	        if (segundos % 5 == 0 && !gnomoGenerado) { //Calculo el tiempo de esepra para que pueda generarse otro gnomo
+				cooldownGnomos = true;
+			}
+			
+			else { //Condicion para cambiar el estado de gnomoGenerado a false
+				cooldownGnomos = false;
+				gnomoGenerado = false;
+			}
+	       
+			if (segundos % 3 == 0 && !tortugaGenerada) { //Calculo el tiempo de esepra para que pueda generarse otro gnomo
+				cooldownTortugas = true;
+			}
+			
+			else { //Condicion para cambiar el estado de gnomoGenerado a false
+				cooldownTortugas = false;
+				tortugaGenerada = false;
+			}
 		}
-		
-		else if(segundos%15 == 0 && gnomoGenerado) { //Condicion para cambiar el estado de gnomoGenerado a false
-			cooldownGnomos = false;
-			gnomoGenerado = false;
-		} 
-		
-		else {
-			cooldownGnomos = false;
-		}
-		
-		if (segundos%5 == 0 && !tortugaGenerada) //Calculo el tiempo de esepra para que pueda generarse otro gnomo
-		{
-			cooldownTortugas = true;
-		}
-		
-		else if(segundos%15 == 0 && tortugaGenerada) { //Condicion para cambiar el estado de gnomoGenerado a false
-			cooldownTortugas = false;
-			tortugaGenerada = false;
-		}
-		else {
-			cooldownTortugas = false;
-		}
-	}
-
-	private void comprobarGameOver() {
-	    if (vidas < 0 || entorno.estaPresionada('r')) {
-	        iniciarJuego();
-	    }
-	}
+ 
 
 	private void funcionamientoGnomos() {
 	    Random random = new Random();
@@ -256,7 +273,7 @@ public class Juego extends InterfaceJuego
 	            EstadoDeGnomos(g, random);
 	            
 	            if (pep.colisionGnomos(g)&& pep.getY() > 350) {
-	                gnomos[i] = null;  
+	                gnomos[i] = null;
 	                gnomosSalvados++;
 	            }
 	            
@@ -462,6 +479,14 @@ public class Juego extends InterfaceJuego
 	    		}
 	    	}
 	    }
+	    
+        if (vidas < 0) {
+            gameOver = true;
+        }
+        
+        if (gnomosSalvados >= 10) {
+            victoria = true;
+        }
 	}
 	
 
@@ -568,7 +593,7 @@ public class Juego extends InterfaceJuego
 	 * comprueba si se esta pulsando el clic izquierdo
 	 * de ser el caso mueve la nave hasta la posicion X del cursor
 	 */
-	private void dibujarNave() {
+	private void funcionamientoNave() {
 	    navecita.dibujarse(entorno);
 	    if (entorno.estaPresionado(entorno.BOTON_IZQUIERDO)) {
 	        navecita.moverseHacia(entorno.mouseX());
@@ -582,21 +607,59 @@ public class Juego extends InterfaceJuego
 	 * estan funcionando correctamente
 	 */
 	
-    private void estadisticas() {      
-        entorno.cambiarFont("Arial", 20, Color.white);
-        entorno.escribirTexto("Vidas: " + vidas, 10, 20);
-        entorno.escribirTexto("Gnomos Salvados: " + gnomosSalvados, 10, 40);
-        entorno.escribirTexto("Gnomos Perdidos: " + gnomosPerdidos, 10, 60);
-        entorno.escribirTexto("Gnomos en Pantalla: " + gnomosEnPantalla, 10, 80);
-        entorno.escribirTexto("Tortugas Asesinadas: " + tortugasEliminadas, 10, 100);
-        entorno.escribirTexto("Tiempo: " + minutos + ":" + segundos, 10, 120);
-        entorno.escribirTexto("Pep Y Inf: " + pep.limiteInferior(), 10, 140);
-        entorno.escribirTexto("Pep X Izq: " + pep.limiteIzquierdo(), 10, 160);
-        entorno.escribirTexto("Pep X Der: " + pep.limiteDerecho(), 10, 180);
-        
-    }
+	private void estadisticas() {      
+	    entorno.cambiarFont("Arial", 20, Color.white);
+	    entorno.escribirTexto("Vidas: " + vidas, 10, 20);
+	    entorno.escribirTexto("Gnomos Salvados: " + gnomosSalvados, 10, 40);
+	    entorno.escribirTexto("Gnomos Perdidos: " + gnomosPerdidos, 10, 60);
+	    entorno.escribirTexto("Gnomos en Pantalla: " + gnomosEnPantalla, 10, 80);
+	    entorno.escribirTexto("Tortugas Asesinadas: " + tortugasEliminadas, 10, 100);
+	    entorno.escribirTexto("tiem" + segundos, 10, 120);
+
+	    String tiempo = String.format("%02d:%02d", minutos, segundos);
+	    entorno.escribirTexto("Tiempo: " + tiempo, 10, 120);
+	    
+	    
+	    entorno.escribirTexto("Pep Y Inf: " + pep.limiteInferior(), 10, 140);
+	    entorno.escribirTexto("Pep X Izq: " + pep.limiteIzquierdo(), 10, 160);
+	    entorno.escribirTexto("Pep X Der: " + pep.limiteDerecho(), 10, 180);
+	}
+
     
-    
+	 private void dibujarInicio() {
+	        // Dibuja la pantalla de inicio
+	        entorno.dibujarImagen(titleScreen, 400, 300, 0, 1);
+	        entorno.cambiarFont("Arial", 50, Color.green);
+	        entorno.escribirTexto("Ola", (entorno.ancho()/2) - 100, entorno.alto()/2 - 100);
+	        entorno.escribirTexto("Apreta \"ENTER\" para comenzar", (entorno.ancho()/2 )- 350, entorno.alto()/2 + 50);
+
+	        if (entorno.sePresiono(entorno.TECLA_ENTER)) {
+	            inicio = false; // Empieza el juego si se presiona la tecla
+	        }
+	    }
+
+	 private void dibujarGameOver() {
+		 entorno.dibujarImagen(gameOverScreen, 400, 300, 0, 1);
+		 entorno.cambiarFont("Arial", 50, Color.red);
+		 entorno.escribirTexto("A casa pete", (entorno.ancho()/2) - 100, entorno.alto()/2 - 100);
+		 entorno.escribirTexto("Apreta \"ENTER\" para reiniciar",(entorno.ancho()/2 )- 350, entorno.alto()/2 + 50);
+		 
+		 if (entorno.sePresiono(entorno.TECLA_ENTER)) {
+			 iniciarJuego();
+		 }
+	 }
+
+	 private void dibujarVictoria() {
+		 entorno.dibujarImagen(winScreen, 400, 300, 0, 1);
+		 entorno.cambiarFont("Arial", 50, Color.green);
+		 entorno.escribirTexto("¡GANASTE!", (entorno.ancho()/2) - 100, entorno.alto()/2 - 100);
+		 entorno.escribirTexto("Apreta \"ENTER\" para continuar", (entorno.ancho()/2 )- 350, entorno.alto()/2 + 50);
+		 
+		 if (entorno.sePresiono(entorno.TECLA_ENTER)) {
+			 iniciarJuego();
+		 }
+	 }
+
 	/*
 	 * Reinicia todas las variables a su estado inicial
 	 * (en proceso) reinicia el juego

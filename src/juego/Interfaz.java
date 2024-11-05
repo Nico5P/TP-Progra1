@@ -12,16 +12,8 @@ public class Interfaz {
         this.seleccion = 0;
     }
 
-    public boolean pausado() {
-        return pausado;
-    }
-
     public void noPausado() {
         pausado = !pausado;
-    }
-
-    public int opcionElegida() {
-        return seleccion;
     }
 
     public void cambiarOpcion(int direccion) {
@@ -58,5 +50,13 @@ public class Interfaz {
             entorno.cambiarFont("Arial", 30, Color.WHITE);
         }
         entorno.escribirTexto("Reiniciar", ancho / 2 - 50, alto / 2 + 50);
+    }
+    
+    public boolean pausado() {
+    	return pausado;
+    }
+    
+    public int opcionElegida() {
+    	return seleccion;
     }
 }
