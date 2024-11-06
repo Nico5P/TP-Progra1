@@ -10,7 +10,7 @@ public class BoladeFuego {
 	 double x, y;
 	 double ancho;
 	 double alto;
-	 double velocidad = 10;
+	 double velocidad = 5;
 	 boolean disparada; //Se usa para saber si fue disparada
 	 boolean direccionDerecha; //Direccion en la que se movera
 	 boolean direccion;
@@ -21,7 +21,7 @@ public class BoladeFuego {
 	        this.x = x;
 	        this.y = y;
 	        this.direccion = direccion;
-	        this.velocidad = 10; // Ajusta la velocidad según sea necesario
+	        this.velocidad = 5; // Ajusta la velocidad según sea necesario
 	        this.alto=16;
 	        this.ancho=16;
 	        this.disparada = true;

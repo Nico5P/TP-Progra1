@@ -374,11 +374,10 @@ public class Juego extends InterfaceJuego
 					}
 					
 					if(t1.limiteInferior() + 15 >= pep.limiteInferior() && t1.limiteSuperior() - 15 <= pep.limiteSuperior()) {
-//						for(Bombas b: bombas) {
-							if (t1.caminar && bombas==null) {
+							if (bombas==null && t1.caminar && t1.x < pep.x && pep.limiteInferior() != 495) {
 								bombas = new Bombas(t1.limiteDerecho() + 5, t1.y - 5, true);
 							}
-							if (!t1.caminar && bombas==null) {
+							if (bombas==null && !t1.caminar && t1.x > pep.x && pep.limiteInferior() != 495) {
 								bombas = new Bombas(t1.limiteIzquierdo() - 5, t1.y - 5, false);	
 							}
 //						}

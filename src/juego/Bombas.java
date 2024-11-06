@@ -10,7 +10,7 @@ public class Bombas {
 		 double x, y;
 		 double ancho;
 		 double alto;
-		 double velocidad = 10;
+		 double velocidad;
 		 boolean bombaEnPantalla;
 		 boolean disparada; //Se usa para saber si fue disparada
 		 boolean direccionDerecha; //Direccion en la que se movera
@@ -22,7 +22,7 @@ public class Bombas {
 		        this.x = x;
 		        this.y = y;
 		        this.direccion = direccion;
-		        this.velocidad = 10; // Ajusta la velocidad según sea necesario
+		        this.velocidad = 3; // Ajusta la velocidad según sea necesario
 		        this.alto=16;
 		        this.ancho=16;
 		        this.disparada = true;
@@ -50,7 +50,7 @@ public class Bombas {
 		 }
 		 
 		 public void dibujarBomba(Entorno entorno) {
-			 entorno.dibujarImagen(imagen, x, y, 0, 0.6);
+			 entorno.dibujarImagen(imagen, x, y, 0, 0.3);
 		 }
 		 
 		 
