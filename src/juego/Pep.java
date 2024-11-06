@@ -19,7 +19,6 @@ public class Pep {
     public boolean salto;
     public boolean escudoActivo = false;   // Indica si el escudo está activado
     public int impactosRestantes = 3;    // Contador de colisiones resistidas por el escudo
- //   boolean direcMov;
     Image imagen;
 
 	public Pep(double x, double y) {
@@ -33,8 +32,7 @@ public class Pep {
 	public void moverIzquierda() { //Mueve a pep a la izquierda
 		if (!saltando && apoyado) { 
 			this.x -= 5; 
-			mirandoDerecha = false; 
-			//direcMov = false;
+			mirandoDerecha = false;
 		}
 	}
 	
@@ -43,7 +41,6 @@ public class Pep {
 		{
 			this.x += 5; 
 			mirandoDerecha = true;
-		//	direcMov = true;
 		}
 	}
 
@@ -124,11 +121,23 @@ public class Pep {
 		*/
 		if (apoyado) {
 			if (mirandoDerecha) {
-				imagen = Herramientas.cargarImagen("juego/imagenes/pepDer.png");
-			} else {				
-				imagen = Herramientas.cargarImagen("juego/imagenes/pepIzq.png");
+				if (moviendose) {					
+					imagen = Herramientas.cargarImagen("juego/imagenes/pepMoverDer.png");
+				}
+				else {
+					imagen = Herramientas.cargarImagen("juego/imagenes/pepDer.png");					
+				}
+			} 
+			else {
+				if (moviendose) {
+					imagen = Herramientas.cargarImagen("juego/imagenes/pepMoverIzq.png");
+				}
+				else {
+					imagen = Herramientas.cargarImagen("juego/imagenes/pepIzq.png");
+				}
 			}
 		}
+		
 		else if (!apoyado && mirandoDerecha) {
 			imagen = Herramientas.cargarImagen("juego/imagenes/pepCaerDer.png");				
 		} else {

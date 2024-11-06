@@ -46,27 +46,26 @@ public class Gnomos {
 		entorno.dibujarImagen(imagen, x, y, 0, 1);
 	}
 	
-	public void caida() {
-		if(!apoyado) {
-			this.y += 1;
+	public void caida() {			//Cuando los gnomos no estan en una isla, disimula la caída.
+		if(!apoyado) {				//Si el gnomo no esta apoyado en una isla.
+			this.y += 2;			//Aumenta la coordenada y, para que simule una caída
 		}
 	}
 	
-	public void moverIzquierda() {
+	public void moverIzquierda() {	//Mover a la izquierda.
         	this.x+=velocidad;
         	derecha = false;
     }
 	
-	public void moverDerecho() {
+	public void moverDerecho() {	//Mover a la derecha.
 			this.x -=velocidad;
 			derecha = true;        		
 	}
 	
-    public void volverASalir() {
-        this.posicionX = this.x;
-        this.posicionY = this.y;
-        salvado=false;
-    }
+	
+	/*
+	 * Colisión de gnomos con distintos objetos: Tortugas y la Navecita.
+	 */
     
     public boolean colisionTortugas(Tortugas t) {
         return (this.limiteIzquierdo() < t.limiteDerecho() &&
@@ -75,12 +74,7 @@ public class Gnomos {
                 this.limiteInferior() > t.limiteSuperior());
     }
 
-    public boolean colisionIslas(Islas i) {
-        return (this.limiteIzquierdo() < i.limiteDerecho() &&
-                this.limiteDerecho() > i.limiteIzquierdo() &&
-                this.limiteSuperior() < i.limiteInferior() &&
-                this.limiteInferior() > i.limiteSuperior());
-    }
+
     
     public boolean colisionNavecita(Navecita n) {
     	return (this.x < n.getX() + n.ancho &&
@@ -89,14 +83,10 @@ public class Gnomos {
                 this.y + this.alto > n.getY());
     }
     
-    public void seReinicia(double nuevaX, double nuevaY, double ancho, double alto) {
-    	this.x=nuevaX;
-    	this.y=nuevaY;
-    	this.ancho=ancho;
-    	this.alto=alto;
-    	this.salvado=false;
-    }
-    
+
+    /*
+     * Los limites de los gnomos.
+     */
     public double limiteSuperior() 
     {
     	return this.y - this.alto/2;

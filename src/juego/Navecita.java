@@ -10,7 +10,9 @@ public class Navecita {
 	public double ancho;
 	public double alto;
 	public boolean mirandoDerecha;
+	public boolean encendida;
 	Image imagen;
+	Image fuego;
 	
 	public Navecita(double x, double y) {
 		this.x = x; 
@@ -38,10 +40,21 @@ public class Navecita {
 	public void dibujarse(Entorno entorno) {
 //		entorno.dibujarRectangulo(this.x, this.y, this.ancho, this.alto, 0, Color.magenta); //Esta línea dibuja la hitbox de la nave
 		if (mirandoDerecha) {
+			this.fuego = Herramientas.cargarImagen("juego/imagenes/bolaDeFuegoDerecha.png");
 			this.imagen = Herramientas.cargarImagen("juego/imagenes/navecitaDerecha.png");
 		}
 		else {
+			this.fuego = Herramientas.cargarImagen("juego/imagenes/bolaDeFuegoIzquierda.png");
 			this.imagen = Herramientas.cargarImagen("juego/imagenes/navecitaIzquierda.png");
+		}
+		
+		if (encendida) {
+			if (mirandoDerecha) {
+				entorno.dibujarImagen(fuego, x-35, y, 0, 0.25);				
+			}
+			else {
+				entorno.dibujarImagen(fuego, x+35, y, 0, 0.25);			
+			}
 		}
 		entorno.dibujarImagen(imagen, x, y, 0, 0.1);
 	}
