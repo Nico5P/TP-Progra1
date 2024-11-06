@@ -60,6 +60,13 @@ public class BoladeFuego {
 				 this.limiteInferior() > t.limiteSuperior());
 	 }
 	 
+	 public boolean colisionBombas(Bombas b) {
+		 return (this.limiteIzquierdo() < b.limiteDerecho() &&
+				 this.limiteDerecho() > b.limiteIzquierdo() &&
+				 this.limiteSuperior() < b.limiteInferior() &&
+				 this.limiteInferior() > b.limiteSuperior());
+	 }
+	 
 	//Limites y valores de la hitbox
 	 
 	 public double getX() {

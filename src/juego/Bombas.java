@@ -2,7 +2,6 @@ package juego;
 
 import java.awt.Color;
 import java.awt.Image;
-
 import entorno.Entorno;
 import entorno.Herramientas;
 
@@ -26,13 +25,7 @@ public class Bombas {
 		        this.alto=16;
 		        this.ancho=16;
 		        this.disparada = true;
-		        if (this.direccion) {
-		        	this.imagen = Herramientas.cargarImagen("juego/imagenes/bolaDeFuegoDerecha.png");
-		        }
-		        else {
-		        	this.imagen = Herramientas.cargarImagen("juego/imagenes/bolaDeFuegoIzquierda.png");
-		        }
-		        
+		     
 		 }
 		 
 		 public void disparo() {
@@ -45,14 +38,12 @@ public class Bombas {
 
 		 public void dibujarse(Entorno entorno) {
 			 if (disparada) {
-				 entorno.dibujarRectangulo(x, y, ancho, alto, 0, Color.orange);
+				 this.imagen = Herramientas.cargarImagen("juego/imagenes/bomba.png");
+			//	 entorno.dibujarRectangulo(x, y, ancho, alto, 0, Color.orange);
+				 entorno.dibujarImagen(imagen, x, y, 0, 2.5);
+
 			 }
-		 }
-		 
-		 public void dibujarBomba(Entorno entorno) {
-			 entorno.dibujarImagen(imagen, x, y, 0, 0.3);
-		 }
-		 
+		 } 
 		 
 		//Limites y valores de la hitbox
 		 

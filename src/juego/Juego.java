@@ -25,9 +25,19 @@ public class Juego extends InterfaceJuego
 	Image fondo;
 	Image casa;
 	Image logo;
+	Image vida;
+	Image escudo;
+	Image gnomo;
+	Image perdidos;
+	Image reloj;
+	Image kills;
 	Image titleScreen;
+	Image tutoScreen;
 	Image winScreen;
 	Image gameOverScreen;
+	Image titleText;
+	Image winText;
+	Image gameOverText;
 	int islasPorFila;
 	int anchoIsla;
 	int altoIsla;
@@ -36,7 +46,6 @@ public class Juego extends InterfaceJuego
 	int vidas;
 	int gnomosPerdidos;
 	int gnomosSalvados;
-	int gnomosEnPantalla;
 	int numTortuga;
 	int tortugasEliminadas;
 	int numIsla;
@@ -49,6 +58,7 @@ public class Juego extends InterfaceJuego
 	int enQueIslaEsta;
 	int conQueIslaChoca;
 	boolean inicio;
+	boolean tutorial;
 	boolean victoria;
 	boolean gameOver;
     boolean Jugando;
@@ -82,6 +92,7 @@ public class Juego extends InterfaceJuego
     	
         this.Jugando = true;
         this.inicio = true;
+        this.tutorial = false;
         this.victoria = false;
         this.gameOver = false;
         this.cooldownGnomos = false;
@@ -94,7 +105,6 @@ public class Juego extends InterfaceJuego
         this.gnomosSalvados = 0;
         this.gnomosPerdidos = 0;
         this.tortugasEliminadas = 0;
-        this.gnomosEnPantalla = 0;
         
         this.horas = 0;
         this.minutos = 0;
@@ -107,10 +117,19 @@ public class Juego extends InterfaceJuego
     	iniciarInterfaz();
     	fondo = Herramientas.cargarImagen("juego/imagenes/fondo.png");
     	casa = Herramientas.cargarImagen("juego/imagenes/casa.png");
-    	logo = Herramientas.cargarImagen("juego/imagenes/logo.png");
+    	vida = Herramientas.cargarImagen("juego/imagenes/vida.png");
+    	escudo = Herramientas.cargarImagen("juego/imagenes/escudo.png");
+    	gnomo = Herramientas.cargarImagen("juego/imagenes/gnomo.png");
+    	kills = Herramientas.cargarImagen("juego/imagenes/kills.png");
+    	perdidos = Herramientas.cargarImagen("juego/imagenes/perdidos.png");
+    	reloj = Herramientas.cargarImagen("juego/imagenes/reloj.png");
     	titleScreen = Herramientas.cargarImagen("juego/imagenes/titleScreen.png");
+    	tutoScreen = Herramientas.cargarImagen("juego/imagenes/tutoScreen.png");
     	winScreen = Herramientas.cargarImagen("juego/imagenes/winScreen.png");
     	gameOverScreen = Herramientas.cargarImagen("juego/imagenes/gameOverScreen.png");
+    	titleText = Herramientas.cargarImagen("juego/imagenes/titleText.png");
+    	winText = Herramientas.cargarImagen("juego/imagenes/winText.png");
+    	gameOverText = Herramientas.cargarImagen("juego/imagenes/gameOverText.png");
     }
 
     private void iniciarInterfaz() {
@@ -129,14 +148,12 @@ public class Juego extends InterfaceJuego
     }
     
     private void generarGnomos() {
-        gnomosEnPantalla = 0; //Valor inicial de gnomos en pantalla
         gnomos = new Gnomos[4];
         gnomoGenerado = false;
         actualizarTiempo(); //Actualiza el valor del boolean cooldownGnomos y gnomoGenerado
         for (Gnomos g : gnomos) {
-            if (g == null && gnomos.length < 4 && cooldownGnomos) {
+            if (g == null && gnomos.length < 6 && cooldownGnomos) {
                 g = new Gnomos(400, 83, 10, 20);
-                gnomosEnPantalla++;  
                 gnomoGenerado = true; // Marca que se ha generado un gnomo
             }
             break;
@@ -212,10 +229,13 @@ public class Juego extends InterfaceJuego
             }
             return;            	
         }
+        
         if (inicio) {
             dibujarInicio();
+        } else if (tutorial) {
+        	dibujarTutorial();
         } else if (gameOver) {
-            dibujarGameOver();
+        	dibujarGameOver();
         } else if (victoria) {
             dibujarVictoria();
         } else {
@@ -226,7 +246,7 @@ public class Juego extends InterfaceJuego
     }
     
     private void actualizarEstadoDelJuego() {
-    	if (!inicio || !gameOver || !victoria) {
+    	if (!inicio || !tutorial || !gameOver || !victoria) {
     		tiempoJugando++;
     		if ((tiempoJugando/60) == 60){
     			tiempoJugando = 0;
@@ -254,7 +274,7 @@ public class Juego extends InterfaceJuego
 	        /*
 	         * Tanto en la generacion de gnomos como en tortugas, 
 	         */
-	        if(segundos % 10 == 0) {
+	        if(segundos % 5 == 0) {
 	        	gnomoGenerado=false;
 	        }
 			if(gnomoGenerado) { //Calculo el tiempo de esepra para que pueda generarse otro gnomo
@@ -359,7 +379,6 @@ public class Juego extends InterfaceJuego
 					
 					if(tortugas[i].limiteSuperior() > entorno.alto()) {
 						tortugas[i] = null;
-						tortugasEliminadas++;
 						break;
 					}
 		
@@ -371,14 +390,13 @@ public class Juego extends InterfaceJuego
 					}
 					
 					if(t1.limiteInferior() + 15 >= pep.limiteInferior() && t1.limiteSuperior() - 15 <= pep.limiteSuperior()) {
-							if (bombas==null && t1.caminar && t1.x < pep.x && pep.limiteInferior() != 495) {
-								bombas = new Bombas(t1.limiteDerecho() + 5, t1.y - 5, true);
-							}
-							if (bombas==null && !t1.caminar && t1.x > pep.x && pep.limiteInferior() != 495) {
-								bombas = new Bombas(t1.limiteIzquierdo() - 5, t1.y - 5, false);	
-							}
-//						}
-						
+						if (bombas==null && t1.caminar && t1.x < pep.x && pep.limiteInferior() != 495) {
+							bombas = new Bombas(t1.limiteDerecho() + 5, t1.y - 5, true);
+						}
+						if (bombas==null && !t1.caminar && t1.x > pep.x && pep.limiteInferior() != 495) {
+							bombas = new Bombas(t1.limiteIzquierdo() - 5, t1.y - 5, false);	
+						}
+							
 					}
 				}        
 			}
@@ -492,24 +510,39 @@ public class Juego extends InterfaceJuego
 	    	}
 	    }
 	    
-//	    for(int i=0; i< bombas.length; i++) {
-//	    	Bombas b=bombas[i];
-	    	if(bombas!=null) {
-	    		if(pep.colisionBombas(bombas)) {
-	    			bombas = null;
-	    			pep.x = 400;
-	    			pep.y = 480;
-	    			pep.apoyado = true;
-	    			vidas--;
-	    		}
-	    	}
-//	    }
+	    /*
+	     * La colision de pep con bombas.
+	     * Si pep colisiona con una bomba, muere, perdiendo una vida, y volviendo a aparecer.
+	     * Si pep tiene el escudo activado, y este tiene al menos un impacto, entonces pep no morira, pero perdera un uso del escudo
+	     * Del mismo modo, si el escudo esta activado pero no le quedan impactos, morira
+	     */
+	    if (bombas != null) { 
+	        if (pep.colisionBombas(bombas)) {
+	            if (pep.escudoActivo && pep.impactosRestantes > 0) {
+	            	pep.impactosRestantes-=1;
+	            	bombas = null;
+	            	pep.escudoActivo = false;
+	            } else {
+	                // Si el escudo no está activo o no tiene impactos restantes Pep pierde vida
+	                pep.x = 400;
+	                pep.y = 480;
+	                pep.apoyado = true;
+	                bombas = null;
+	                vidas--;
+	            }
+	        }
+	        if (bolaDeFuego != null && bolaDeFuego.colisionBombas(bombas)) {
+	        	bolaDeFuego = null;
+	        	bombas = null;
+	        	
+	        }
+	    }
 	    
-        if (vidas < 0 || gnomosPerdidos == 6) {
+        if (vidas < 1 || gnomosPerdidos == 8) {
             gameOver = true;
         }
         
-        if (gnomosSalvados == 4) {
+        if (gnomosSalvados == 8) {
             victoria = true;
         }
 	}
@@ -558,7 +591,7 @@ public class Juego extends InterfaceJuego
       //Pep solo puede disparar si esta apoyado y si no hay ninguna bola de fuego en pantalla
         if ((entorno.sePresiono(entorno.TECLA_ABAJO) || entorno.sePresiono('c')) && puedeMoverse && bolaDeFuego == null) {  
         	if(pep.mirandoDerecha) {  //Si pep mira hacia la derecha dispara hacia la derecha. Caso contrario, dispara hacia la izquierda.
-        		bolaDeFuego = new BoladeFuego(pep.limiteDerecho() + 8, pep.y - 5, pep.mirandoDerecha); 
+        		bolaDeFuego = new BoladeFuego(pep.limiteDerecho() + 8, pep.y - 5, pep.mirandoDerecha);
         	}
         	else {
         		bolaDeFuego = new BoladeFuego(pep.limiteIzquierdo() - 8, pep.y - 5, pep.mirandoDerecha);
@@ -579,7 +612,16 @@ public class Juego extends InterfaceJuego
 	        pep.salto();
 	    }
 
-	    if (!pep.apoyado) { //Si Pep no está apoyado verifica si es porque saltó o porque se está cayendo, y se ejecuta de acuerdo al caso.
+	    if (entorno.sePresiono('s') && puedeMoverse) {
+	        if (!pep.escudoActivo) {
+	            pep.escudoActivo = true;  // Activa el escudo
+	        }
+	        else if (pep.escudoActivo) {
+	        	pep.escudoActivo = false;
+	        }
+	    }
+	    
+	    if (!pep.apoyado) { // Si Pep no está apoyado verifica si es porque saltó o porque se está cayendo, y se ejecuta de acuerdo al caso.
 	        pep.caer();
 	        verificarMovimientoPep();
 	    }
@@ -607,7 +649,6 @@ public class Juego extends InterfaceJuego
     private void funcionamientoBombas() {
     	if (bombas != null) {
     		bombas.dibujarse(entorno);
-    		bombas.dibujarBomba(entorno);
     	}
     	if (bombas != null && bombas.disparada) {
     	    bombas.disparo();
@@ -637,37 +678,72 @@ public class Juego extends InterfaceJuego
 	 */
 	
 	private void estadisticas() {      
-	    entorno.cambiarFont("Arial", 20, Color.white);
-	    entorno.escribirTexto("Vidas: " + vidas, 10, 20);
-	    entorno.escribirTexto("Gnomos Salvados: " + gnomosSalvados, 10, 40);
-	    entorno.escribirTexto("Gnomos Perdidos: " + gnomosPerdidos, 10, 60);
-	    entorno.escribirTexto("Gnomos en Pantalla: " + gnomosEnPantalla, 10, 80);
-	    entorno.escribirTexto("Tortugas Asesinadas: " + tortugasEliminadas, 10, 100);
+	    entorno.cambiarFont("Arial", 30, Color.white);
+	    for (int i = 0; i < vidas; i++) {
+	        int x = 40 + i * 50;  // Cambia la posición X de cada imagen
+	        entorno.dibujarImagen(vida, x, 40, 0, 1.5);
+	    }
+	    
+	    for (int i = 0; i < pep.impactosRestantes; i++) {
+	        int x = 40 + i * 50;  // Cambia la posición X de cada imagen
+	        entorno.dibujarImagen(escudo, x, 100, 0, 1.5);
+	    }
+	    
+//	    for (int i = 0; i < gnomosSalvados; i++) {
+//	    	int y = 190 + i * 30;  // Cambia la posición X de cada imagen
+//	    	entorno.dibujarImagen(gnomo, 40, y, 0, 1.5);
+//	    }
+	    entorno.dibujarImagen(gnomo, 40, 160, 0, 1.5);
+	    entorno.escribirTexto("" + gnomosSalvados, 60, 170);
+	    
+//	    for (int i = 0; i < gnomosPerdidos; i++) {
+//	    	int y = 190 + i * 30;  // Cambia la posición X de cada imagen
+//	    	entorno.dibujarImagen(perdidos, 80, y, 0, 1.5);
+//	    }
+	    entorno.dibujarImagen(perdidos, 40, 220, 0, 1.5);
+	    entorno.escribirTexto("" + gnomosPerdidos, 60, 230);
+	    
+//	    for (int i = 0; i < tortugasEliminadas; i++) {
+//	        int y = 190 + i * 10;  // Cambia la posición X de cada imagen
+//	        entorno.dibujarImagen(kills, 100, y, 0, 1.5);
+//	    }
+	    entorno.dibujarImagen(kills, 40, 260, 0, 1.5);
+	    entorno.escribirTexto("" + tortugasEliminadas, 60, 270);
+	    entorno.dibujarImagen(reloj, 670, 40, 0, 1.5);
+	    
+//	    entorno.escribirTexto(""+vidas, 60, 40);
+//	    entorno.escribirTexto("Gnomos Salvados: " + gnomosSalvados, 10, 40);
+//	    entorno.escribirTexto("Gnomos Perdidos: " + gnomosPerdidos, 10, 60);
+//	    entorno.escribirTexto("escudo: " + pep.impactosRestantes, 10, 80);
+//	    entorno.escribirTexto("Tortugas Asesinadas: " + tortugasEliminadas, 10, 100);
 	    String tiempo = String.format("%02d:%02d", minsJugando , tiempoJugando/60);
-	    entorno.escribirTexto("Tiempo: " + tiempo, 10, 120);
-	    entorno.escribirTexto("Pep Y Inf: " + pep.limiteInferior(), 10, 140);
-	    entorno.escribirTexto("Pep X Izq: " + pep.limiteIzquierdo(), 10, 160);
-	    entorno.escribirTexto("Pep X Der: " + pep.limiteDerecho(), 10, 180);
+	    entorno.escribirTexto("" + tiempo, 700, 60);
 	}
 
     
 	 private void dibujarInicio() {
 	        // Dibuja la pantalla de inicio
-	        entorno.dibujarImagen(titleScreen, 400, 300, 0, 1);
-	        entorno.dibujarImagen(logo, 400, 150, 0, 0.2);
-	        entorno.cambiarFont("Arial", 50, Color.green);
-	        entorno.escribirTexto("Apreta \"ENTER\" para comenzar", (entorno.ancho()/2 )- 350, entorno.alto()/2 + 50);
+		 entorno.dibujarImagen(titleScreen, 400, 300, 0, 1);
+		 entorno.dibujarImagen(titleText, 400, 400, 0, 1);
 
-	        if (entorno.sePresiono(entorno.TECLA_ENTER)) {
-	            inicio = false; // Empieza el juego si se presiona la tecla
-	        }
-	    }
+		 if (entorno.sePresiono(entorno.TECLA_ENTER)) {
+			 inicio = false;
+			 tutorial = true;
+		 }
+	 }
+	 
+	 private void dibujarTutorial() {
+	        // Dibuja la pantalla de inicio
+		 entorno.dibujarImagen(tutoScreen, 400, 300, 0, 1);
 
+		 if (entorno.sePresiono(entorno.TECLA_ENTER)) {
+			 tutorial = false; // Empieza el juego si se presiona la tecla
+		 }
+	 }
+	 
 	 private void dibujarGameOver() {
 		 entorno.dibujarImagen(gameOverScreen, 400, 300, 0, 1);
-		 entorno.cambiarFont("Arial", 50, Color.red);
-		 entorno.escribirTexto("A casa pete", (entorno.ancho()/2) - 100, entorno.alto()/2 - 100);
-		 entorno.escribirTexto("Apreta \"ENTER\" para reiniciar",(entorno.ancho()/2 )- 350, entorno.alto()/2 + 50);
+		 entorno.dibujarImagen(gameOverText, 400, 50, 0, 1);
 		 
 		 if (entorno.sePresiono(entorno.TECLA_ENTER)) {
 			 iniciarJuego();
@@ -676,9 +752,7 @@ public class Juego extends InterfaceJuego
 
 	 private void dibujarVictoria() {
 		 entorno.dibujarImagen(winScreen, 400, 300, 0, 1);
-		 entorno.cambiarFont("Arial", 50, Color.green);
-		 entorno.escribirTexto("¡GANASTE!", (entorno.ancho()/2) - 100, entorno.alto()/2 - 100);
-		 entorno.escribirTexto("Apreta \"ENTER\" para continuar", (entorno.ancho()/2 )- 350, entorno.alto()/2 + 50);
+		 entorno.dibujarImagen(winText, 400, 50, 0, 1);
 		 
 		 if (entorno.sePresiono(entorno.TECLA_ENTER)) {
 			 iniciarJuego();

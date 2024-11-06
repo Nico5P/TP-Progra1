@@ -17,6 +17,9 @@ public class Pep {
     public boolean debajoDe;
     public boolean moviendose;
     public boolean salto;
+    public boolean escudoActivo = false;   // Indica si el escudo está activado
+    public int impactosRestantes = 3;    // Contador de colisiones resistidas por el escudo
+ //   boolean direcMov;
     Image imagen;
 
 	public Pep(double x, double y) {
@@ -31,6 +34,7 @@ public class Pep {
 		if (!saltando && apoyado) { 
 			this.x -= 5; 
 			mirandoDerecha = false; 
+			//direcMov = false;
 		}
 	}
 	
@@ -39,6 +43,7 @@ public class Pep {
 		{
 			this.x += 5; 
 			mirandoDerecha = true;
+		//	direcMov = true;
 		}
 	}
 
@@ -98,7 +103,25 @@ public class Pep {
 		}
 	}
 	
+	
 	public void dibujarse(Entorno entorno) {
+		if (escudoActivo) {
+			if (impactosRestantes > 0) {
+				entorno.dibujarCirculo(x, y-5, 60, Color.blue);  // Dibuja solo el contorno				
+			}
+			else {
+				entorno.dibujarCirculo(x, y-5, 60, Color.GRAY); 			
+			}
+		} 
+		/*
+		if (direcMov) {
+    		imagen = Herramientas.cargarImagen("juego/imagenes/pepMoverDer.png");
+		}
+		else {
+
+    		imagen = Herramientas.cargarImagen("juego/imagenes/pepMoverDer.png");
+		}
+		*/
 		if (apoyado) {
 			if (mirandoDerecha) {
 				imagen = Herramientas.cargarImagen("juego/imagenes/pepDer.png");
@@ -107,12 +130,12 @@ public class Pep {
 			}
 		}
 		else if (!apoyado && mirandoDerecha) {
-			imagen = Herramientas.cargarImagen("juego/imagenes/pepDer.png");				
+			imagen = Herramientas.cargarImagen("juego/imagenes/pepCaerDer.png");				
 		} else {
-			imagen = Herramientas.cargarImagen("juego/imagenes/pepIzq.png");				
+			imagen = Herramientas.cargarImagen("juego/imagenes/pepCaerIzq.png");				
 		}
 			
-		entorno.dibujarRectangulo(this.x, this.y, this.ancho, this.alto, 0, Color.red);
+		//entorno.dibujarRectangulo(this.x, this.y, this.ancho, this.alto, 0, Color.red);
 		entorno.dibujarImagen(imagen, x, y-8, 0, 1);
 	}
 	

@@ -1,9 +1,9 @@
 package juego;
 
-import java.awt.Color;
 import java.awt.Image;
 import entorno.Entorno;
 import entorno.Herramientas;
+//import java.awt.Color; se usaba para generar el color del rectangulo
 
 public class Navecita {
 	public double x, y;

@@ -4,7 +4,7 @@ import java.util.Random;
 import entorno.Entorno;
 import entorno.Herramientas;
 import java.awt.Image;
-import java.awt.Color;
+//import java.awt.Color; se usaba para generar el color del rectangulo
 
 public class Tortugas {
 	Entorno[] entorno;

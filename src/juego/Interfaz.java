@@ -1,11 +1,14 @@
 package juego;
 
 import entorno.Entorno;
+import entorno.Herramientas;
 import java.awt.Color;
+import java.awt.Image;
 
 public class Interfaz {
     private boolean pausado;
-    private int seleccion; // 0 para "Continuar", 1 para "Reiniciar"
+    private int seleccion; // 0 para "Continuar", 1 para "Volver al menu"
+	Image imagen;
 
     public Interfaz() {
         this.pausado = false;
@@ -25,13 +28,9 @@ public class Interfaz {
     public void dibujarMenu(Entorno entorno) {
         int ancho = entorno.ancho();
         int alto = entorno.alto();
+        this.imagen = Herramientas.cargarImagen("juego/imagenes/pausa.png");
         entorno.cambiarFont("Arial", 30, Color.WHITE);
-        
-        /*
-         * Dibuja "Pausa" en el menu de pausa
-         */
-        
-        entorno.escribirTexto("Pausa", ancho / 2 - 100, alto / 2 - 50);
+        entorno.dibujarImagen(imagen, 400, 300, 0, 1);
         
         /*
          * Dibuja la opcion "continuar" y "reiniciar" y le cambia el color a la seleccionada
@@ -42,15 +41,17 @@ public class Interfaz {
         } else {
             entorno.cambiarFont("Arial", 30, Color.WHITE);
         }
-        entorno.escribirTexto("Continuar", ancho / 2 - 50, alto / 2);
+        entorno.escribirTexto("CONTINUAR", 310, alto / 2);
         
         if (seleccion == 1) {
             entorno.cambiarFont("Arial", 30, Color.YELLOW);
         } else {
             entorno.cambiarFont("Arial", 30, Color.WHITE);
         }
-        entorno.escribirTexto("Salir", ancho / 2 - 50, alto / 2 + 50);
+        entorno.escribirTexto("VOLVER AL MENÚ PRINCIPAL", 190, alto / 2 + 50);
     }
+    
+    
     
     public boolean pausado() {
     	return pausado;
