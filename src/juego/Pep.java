@@ -127,6 +127,13 @@ public class Pep {
 	            this.limiteInferior() > i.limiteSuperior());
 	}
 	
+	public boolean colisionBombas(Bombas b) {
+	    return (this.limiteIzquierdo() < b.limiteDerecho() &&
+	            this.limiteDerecho() > b.limiteIzquierdo() &&
+	            this.limiteSuperior() < b.limiteInferior() &&
+	            this.limiteInferior() > b.limiteSuperior());
+	}
+	
 	public boolean ultimaDireccion(){
 		return this.mirandoDerecha;
 	}

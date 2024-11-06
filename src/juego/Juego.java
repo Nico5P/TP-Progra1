@@ -19,6 +19,7 @@ public class Juego extends InterfaceJuego
 	Gnomos[] gnomos;
 	Navecita navecita;
 	BoladeFuego bolaDeFuego;
+	Bombas bombas;
 	Audio audio;
 	
 	// Variables y métodos propios de cada grupo
@@ -74,6 +75,7 @@ public class Juego extends InterfaceJuego
     	generarIslas(); //Logica que genera las islas
     	generarPep(); //Logica que genera a Pep
     	generarNave(); //Logica que genera la navecita
+//    	generarBombas();
         iniciarVariables();
     }
     
@@ -173,6 +175,10 @@ public class Juego extends InterfaceJuego
     	pep = new Pep(400, 480);
     }
     
+//    private void generarBombas() {
+//    	bombas = new Bombas[3];
+//    }
+    
     private void generarNave() {
         navecita = new Navecita(400, 560);
     }
@@ -233,6 +239,7 @@ public class Juego extends InterfaceJuego
     		controlarMovimientoPep();
     		funcionamientoBolaDeFuego();
     		funcionamientoTortugas();
+    		funcionamientoBombas();
     		funcionamientoNave();
     	}
     }
@@ -365,6 +372,18 @@ public class Juego extends InterfaceJuego
 						tortugasEliminadas++;
 						break;
 					}
+					
+					if(t1.limiteInferior() + 15 >= pep.limiteInferior() && t1.limiteSuperior() - 15 <= pep.limiteSuperior()) {
+//						for(Bombas b: bombas) {
+							if (t1.caminar && bombas==null) {
+								bombas = new Bombas(t1.limiteDerecho() + 5, t1.y - 5, true);
+							}
+							if (!t1.caminar && bombas==null) {
+								bombas = new Bombas(t1.limiteIzquierdo() - 5, t1.y - 5, false);	
+							}
+//						}
+						
+					}
 				}        
 			}
 		}
@@ -466,6 +485,31 @@ public class Juego extends InterfaceJuego
 	    	}
 	    }
 	    
+	    for(int i=0; i< tortugas.length; i++) {
+	    	Tortugas t=tortugas[i];
+	    	if(t!=null) {
+	    		if(pep.colisionTortugas(t)) {
+	    			 pep.x = 400;
+	    			 pep.y = 480;
+	    			 pep.apoyado = true;
+	    			 vidas--;
+	    		}
+	    	}
+	    }
+	    
+//	    for(int i=0; i< bombas.length; i++) {
+//	    	Bombas b=bombas[i];
+	    	if(bombas!=null) {
+	    		if(pep.colisionBombas(bombas)) {
+	    			bombas = null;
+	    			pep.x = 400;
+	    			pep.y = 480;
+	    			pep.apoyado = true;
+	    			vidas--;
+	    		}
+	    	}
+//	    }
+	    
         if (vidas < 0 || gnomosPerdidos == 6) {
             gameOver = true;
         }
@@ -564,6 +608,20 @@ public class Juego extends InterfaceJuego
 	        }	       
 	    }
 	}
+    
+    private void funcionamientoBombas() {
+    	if (bombas != null) {
+    		bombas.dibujarse(entorno);
+    		bombas.dibujarBomba(entorno);
+    	}
+    	if (bombas != null && bombas.disparada) {
+    	    bombas.disparo();
+    	        
+    	    if (bombas.getX() < 0 || bombas.getX() > entorno.ancho()) {
+    	        bombas = null;
+    	    }	       
+    	}	
+    }
 
 	/*
 	 * Dibuja la nave
