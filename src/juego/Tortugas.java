@@ -3,9 +3,8 @@ package juego;
 import java.util.Random;
 import entorno.Entorno;
 import entorno.Herramientas;
-
-import java.awt.Color;
 import java.awt.Image;
+import java.awt.Color;
 
 public class Tortugas {
 	Entorno[] entorno;
@@ -44,34 +43,37 @@ public class Tortugas {
 		this.caminar=true;
 	}
 	
-	public void dibujarse(Entorno entorno, boolean estaapoyado) { //Cambia la imagen dependiendo de la dirección de la tortuga
-		if ( this.y < 600) {
-			if(mirandoDerecha==true) {
-				this.imagen = Herramientas.cargarImagen("juego/imagenes/tortugaDerecha.png");
-			}
-			else {
-				this.imagen = Herramientas.cargarImagen("juego/imagenes/tortugaIzquierda.png");
-			}
-//			entorno.dibujarRectangulo(x, y, ancho, alto, 0, Color.white);
-			entorno.dibujarImagen(imagen, x-5, y-12, 0, 0.07);
-		}
-	}
-	
-	public void caer() { //Incrementa el valor de Y si no se encuentra sobre una isla
-		if(!this.apoyado) { 
-			this.y += 2;
-		}
-	}
-	
-	public void mover() { //Controla el movimiento de izquierda a derecha
-        if (caminar) {
-        	this.x += 1; // Mover a la derecha
-        } else {
-        	this.x -= 1; // Mover a la izquierda
+	public void dibujarse(Entorno entorno) { //Cambia la imagen dependiendo de la dirección de la tortuga
+        if ( this.y < 600) {
+            if (!apoyado) {
+                imagen = Herramientas.cargarImagen("juego/imagenes/tortCaer.png");
+            }
+            else if (mirandoDerecha) {
+                imagen = Herramientas.cargarImagen("juego/imagenes/tortDer.png");
+            }
+            else {
+                imagen = Herramientas.cargarImagen("juego/imagenes/tortIzq.png");
+            }
+//            entorno.dibujarRectangulo(x, y, ancho, alto, 0, Color.white); hitbox
         }
-	}
+        entorno.dibujarImagen(imagen, x-5, y-12, 0, 1);
+    }
 
-	
+    public void caer() { //Incrementa el valor de Y si no se encuentra sobre una isla
+        if(!this.apoyado) { 
+            this.y += 2;
+        }
+    }
+
+    public void mover() { //Controla el movimiento de izquierda a derecha
+        if (caminar) {
+            this.x += 1; // Mover a la derecha
+            mirandoDerecha = true;
+        } else {
+            this.x -= 1; // Mover a la izquierda
+            mirandoDerecha = false;
+        }
+    }
 
     public boolean colisionIslas(Islas i) {
     	return (this.limiteIzquierdo() < i.limiteDerecho() &&

@@ -1,8 +1,9 @@
 package juego;
 
 import java.awt.Color;
-
 import entorno.Entorno;
+import entorno.Herramientas;
+import java.awt.Image;
 
 public class Pep {
 	public double x, y; 
@@ -16,6 +17,7 @@ public class Pep {
     public boolean debajoDe;
     public boolean moviendose;
     public boolean salto;
+    Image imagen;
 
 	public Pep(double x, double y) {
 		this.x = x; 
@@ -81,26 +83,37 @@ public class Pep {
 			moviendose = true;
 			salto = false;
 		}
-		if(moviendose) 
-		{
-			if(mirandoDerecha) 
-			{
+		if(moviendose) {
+			if(mirandoDerecha) {
 				this.x += VelocidadX; //Suma al valor de x si Pep esta mirando a la derecha
 			}
-			else 
-			{
+			
+			else {
 				this.x -= VelocidadX; //Resta al valor de x si Pep esta mirando a la derecha
 			}
 			VelocidadX -= 1; //Resta gradualmente la distancia que Pep debe recorrer hasta llegar a su destino
-			if (VelocidadX <= 0) 
-			{
+			if (VelocidadX <= 0) {
 				moviendose=false; //Cuando esa distancia vale cero, ya no tiene que restar ni sumar a X
 			}
 		}
 	}
 	
 	public void dibujarse(Entorno entorno) {
+		if (apoyado) {
+			if (mirandoDerecha) {
+				imagen = Herramientas.cargarImagen("juego/imagenes/pepDer.png");
+			} else {				
+				imagen = Herramientas.cargarImagen("juego/imagenes/pepIzq.png");
+			}
+		}
+		else if (!apoyado && mirandoDerecha) {
+			imagen = Herramientas.cargarImagen("juego/imagenes/pepDer.png");				
+		} else {
+			imagen = Herramientas.cargarImagen("juego/imagenes/pepIzq.png");				
+		}
+			
 		entorno.dibujarRectangulo(this.x, this.y, this.ancho, this.alto, 0, Color.red);
+		entorno.dibujarImagen(imagen, x, y-8, 0, 1);
 	}
 	
 	/*

@@ -20,14 +20,14 @@ public class Juego extends InterfaceJuego
 	Navecita navecita;
 	BoladeFuego bolaDeFuego;
 	Bombas bombas;
-	Audio audio;
 	
 	// Variables y métodos propios de cada grupo
 	Image fondo;
+	Image casa;
+	Image logo;
 	Image titleScreen;
 	Image winScreen;
 	Image gameOverScreen;
-	Image casa;
 	int islasPorFila;
 	int anchoIsla;
 	int altoIsla;
@@ -68,7 +68,6 @@ public class Juego extends InterfaceJuego
     }
 
     private void iniciarJuego() {
-    	audio = new Audio();
     	cargarRecursos(); //Carga todos los recursos (imagenes, sonidos)
     	generarTortugas(); //Logica que genera a las tortugas
     	generarGnomos(); //Logica que genera a los gnomos
@@ -107,10 +106,11 @@ public class Juego extends InterfaceJuego
     private void cargarRecursos() {
     	iniciarInterfaz();
     	fondo = Herramientas.cargarImagen("juego/imagenes/fondo.png");
+    	casa = Herramientas.cargarImagen("juego/imagenes/casa.png");
+    	logo = Herramientas.cargarImagen("juego/imagenes/logo.png");
     	titleScreen = Herramientas.cargarImagen("juego/imagenes/titleScreen.png");
     	winScreen = Herramientas.cargarImagen("juego/imagenes/winScreen.png");
     	gameOverScreen = Herramientas.cargarImagen("juego/imagenes/gameOverScreen.png");
-    	audio.cargarSonido("src/juego/sonidos/pepGnomo.wav");
     }
 
     private void iniciarInterfaz() {
@@ -220,6 +220,7 @@ public class Juego extends InterfaceJuego
             dibujarVictoria();
         } else {
             entorno.dibujarImagen(fondo, 400, 240, 0, 0.7);
+            entorno.dibujarImagen(casa, 400, 40, 0, 0.4);
             actualizarEstadoDelJuego();
         }
     }
@@ -287,13 +288,11 @@ public class Juego extends InterfaceJuego
 	            
 	            if (pep.colisionGnomos(g)&& pep.getY() > 350) {
 	                gnomos[i] = null;
-	                audio.play("src/juego/sonidos/pepGnomo.wav");
 	                gnomosSalvados++;
 	            }
 	            
 	            if(g!= null && g.colisionNavecita(navecita)) {
 					gnomos[i] = null;
-					audio.play("src/juego/sonidos/pepGnomo.wav");
 					gnomosSalvados++;
 					
 				}
@@ -302,14 +301,12 @@ public class Juego extends InterfaceJuego
 	            	
 	                if (t != null && g.colisionTortugas(t)) {
 	                	gnomos[i] = null; 
-	                	audio.play("src/juego/sonidos/pepGnomo.wav");
 	                    gnomosPerdidos++;
 	                }
 	            }
 	            
 	            if (g.limiteSuperior() > entorno.alto()) {
 	            	gnomos[i] = null; 
-	            	audio.play("src/juego/sonidos/pepGnomo.wav");
 	                gnomosPerdidos++;
 	            }
 	        }
@@ -356,7 +353,7 @@ public class Juego extends InterfaceJuego
 				}	
 				
 				if(t1 != null) {
-					t1.dibujarse(entorno, Jugando);
+					t1.dibujarse(entorno);
 
 					estadoTortugas(t1,random1);
 					
@@ -469,7 +466,6 @@ public class Juego extends InterfaceJuego
 	        pep.y = 480;
 	        pep.apoyado = true;
 	        vidas--;
-			audio.play("src/juego/sonidos/pepGnomo.wav");
 	    }
 	    
 	    for(int i=0; i< tortugas.length; i++) {
@@ -513,7 +509,7 @@ public class Juego extends InterfaceJuego
             gameOver = true;
         }
         
-        if (gnomosSalvados >= 8 && tortugasEliminadas == 5) {
+        if (gnomosSalvados == 4) {
             victoria = true;
         }
 	}
@@ -579,7 +575,7 @@ public class Juego extends InterfaceJuego
 	        pep.moverDerecha();
 	    }
 
-	    if ((entorno.sePresiono(entorno.TECLA_ARRIBA) || entorno.estaPresionada('w')) && puedeMoverse) {
+	    if ((entorno.sePresiono(entorno.TECLA_ARRIBA) || entorno.estaPresionada('w')) && puedeMoverse && pep.limiteInferior() > 196) {
 	        pep.salto();
 	    }
 
@@ -658,8 +654,8 @@ public class Juego extends InterfaceJuego
 	 private void dibujarInicio() {
 	        // Dibuja la pantalla de inicio
 	        entorno.dibujarImagen(titleScreen, 400, 300, 0, 1);
+	        entorno.dibujarImagen(logo, 400, 150, 0, 0.2);
 	        entorno.cambiarFont("Arial", 50, Color.green);
-	        entorno.escribirTexto("Ola", (entorno.ancho()/2) - 100, entorno.alto()/2 - 100);
 	        entorno.escribirTexto("Apreta \"ENTER\" para comenzar", (entorno.ancho()/2 )- 350, entorno.alto()/2 + 50);
 
 	        if (entorno.sePresiono(entorno.TECLA_ENTER)) {
@@ -689,11 +685,6 @@ public class Juego extends InterfaceJuego
 		 }
 	 }
 
-	/*
-	 * Reinicia todas las variables a su estado inicial
-	 * (en proceso) reinicia el juego
-	 */
-	
 	@SuppressWarnings("unused")
 	public static void main(String[] args) {
 		Juego juego = new Juego();

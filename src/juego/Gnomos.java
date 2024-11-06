@@ -1,12 +1,14 @@
 package juego;
 
 import java.awt.Color;
+import java.awt.Image;
 import entorno.Entorno;
+import entorno.Herramientas;
 
 public class Gnomos {
 	double x, y;
 	double ancho, alto;
-	double velocidad = 1.5;
+	double velocidad = 1;
 	double ticks;
 	double posicionX;
 	double posicionY;
@@ -16,6 +18,7 @@ public class Gnomos {
 	boolean caminar=false; 
 	boolean mirar=false; 
 	boolean salvado;
+	Image imagen;
 	
 	public Gnomos(double x, double y, double ancho, double alto) {
 		this.x=x;
@@ -26,24 +29,37 @@ public class Gnomos {
 	}
 	
 	public void dibujarse(Entorno entorno) {
-		entorno.dibujarRectangulo(x, y, ancho, alto,0, Color.yellow);
+		if (apoyado) {
+			if (derecha) {
+				imagen = Herramientas.cargarImagen("juego/imagenes/gIzq.png");				
+			} else {				
+				imagen = Herramientas.cargarImagen("juego/imagenes/gDer.png");				
+			}
+		}
+		else if (!apoyado && derecha) {
+			imagen = Herramientas.cargarImagen("juego/imagenes/gCaerIzq.png");
+		} else {
+			imagen = Herramientas.cargarImagen("juego/imagenes/gCaerDer.png");
+		}
+			
+		//entorno.dibujarRectangulo(x, y, ancho, alto,0, Color.yellow);
+		entorno.dibujarImagen(imagen, x, y, 0, 1);
 	}
-
+	
 	public void caida() {
 		if(!apoyado) {
-			this.y += 2;
+			this.y += 1;
 		}
 	}
 	
-
 	public void moverIzquierda() {
         	this.x+=velocidad;
-        
+        	derecha = false;
     }
 	
 	public void moverDerecho() {
 			this.x -=velocidad;
-		
+			derecha = true;        		
 	}
 	
     public void volverASalir() {
